@@ -1,281 +1,35 @@
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messanger by BPUP</title>
-    <style>
-        :root {
-            --primary-dark: #17212b;
-            --primary-blue: #4344af;
-            --accent-blue: #5c6bc0;
-            --text-light: #f5f5f5;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        body {
-            background-color: var(--primary-dark);
-            color: var(--text-light);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        /* Hero Section */
-        .hero {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            gap: 4rem;
-            padding: 4rem 0;
-        }
-
-        .hero-content {
-            flex: 1;
-        }
-
-        .phone-mockup {
-            flex: 1;
-            position: relative;
-            height: 600px;
-            perspective: 1000px;
-        }
-
-        .phone-frame {
-            position: absolute;
-            width: 300px;
-            height: 600px;
-            background: #0e0e12;
-            border-radius: 40px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            overflow: hidden;
-            transform: rotateY(-10deg);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        .phone-frame::before {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50%;
-            height: 25px;
-            background: #0e0e12;
-            border-radius: 0 0 15px 15px;
-            z-index: 2;
-        }
-
-        .phone-iframe {
-            position: absolute;
-            top: 50px;
-            left: 15px;
-            width: 270px;
-            height: 500px;
-            border: none;
-            border-radius: 25px;
-            background: white;
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px) rotateY(-10deg); }
-            50% { transform: translateY(-20px) rotateY(-15deg); }
-            100% { transform: translateY(0px) rotateY(-10deg); }
-        }
-
-        .cta-button {
-            display: inline-block;
-            padding: 1.2rem 2.5rem;
-            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            margin-top: 2rem;
-            transition: transform 0.3s ease;
-        }
-
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(67,68,175,0.4);
-        }
-
-        /* Features Section */
-        .features {
-            padding: 6rem 0;
-            background: rgba(255,255,255,0.03);
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-top: 4rem;
-        }
-
-        .feature-card {
-            padding: 2rem;
-            border-radius: 15px;
-            background: linear-gradient(145deg, rgba(67,68,175,0.1), rgba(23,33,43,0.3));
-            text-align: center;
-        }
-
-        .feature-icon {
-            font-size: 2.5rem;
-            color: var(--accent-blue);
-            margin-bottom: 1.5rem;
-        }
-
-        /* Download Section */
-        .download-section {
-            padding: 6rem 0;
-        }
-
-        .platform-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .platform-card {
-            background: rgba(255,255,255,0.05);
-            padding: 2rem;
-            border-radius: 15px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: all 0.3s ease;
-        }
-
-        .platform-card:hover {
-            transform: translateY(-5px);
-            background: rgba(67,68,175,0.15);
-        }
-
-        .platform-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: var(--accent-blue);
-        }
-
-        .platform-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.8rem;
-            padding: 1rem;
-            margin-top: 1.5rem;
-            background: linear-gradient(45deg, var(--primary-blue), var(--accent-blue));
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .platform-btn i {
-            font-size: 1.2rem;
-        }
-
-        .platform-btn:hover {
-            gap: 1.2rem;
-            box-shadow: 0 3px 10px rgba(67,68,175,0.3);
-        }
-
-        /* Testi e titoli */
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(45deg, var(--text-light), var(--accent-blue));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        h2 {
-            font-size: 2.5rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
-        p {
-            line-height: 1.6;
-            color: #cccccc;
-            margin-bottom: 1.5rem;
-        }
-
-        ul {
-            list-style: none;
-            margin: 2rem 0;
-        }
-
-        ul li {
-            padding: 0.5rem 0;
-            color: #cccccc;
-        }
-
-        .repo-section {
-            background: rgba(255,255,255,0.03);
-            padding: 6rem 0;
-            border-radius: 30px;
-            margin: 4rem 0;
-        }
-
-        .repo-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .repo-card {
-            background: rgba(23,33,43,0.5);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(67,68,175,0.3);
-            transition: transform 0.3s ease;
-        }
-
-        .repo-card:hover {
-            transform: translateY(-5px);
-        }
-    </style>
+    <title>BPUP Suite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="index_style.css">
 </head>
-<body>
-    <div class="container">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Messanger</h1>
-                <p>La nuova generazione di messaggistica istantanea universale, sviluppata da BPUP per connettere il mondo.</p>
-                <ul>
-                    <li>✓ Crittografia end-to-end avanzata</li>
-                    <li>✓ Sincronizzazione in tempo reale</li>
-                    <li>✓ Supporto multi-piattaforma</li>
-                </ul>
-                <a href="#download" class="cta-button">Inizia Ora Gratis ▶</a>
-            </div>
-            <div class="phone-mockup">
-                <div class="phone-frame">
-                    <iframe 
-                        src="https://web.messanger.bpup.israiken.it" 
-                        class="phone-iframe"
-                        allow="fullscreen"
-                        loading="lazy">
-                    </iframe>
-                </div>
-            </div>
-        </section>
 
+<body>
+    <div class="carousel">
+        <div class="carousel-item active">
+            <h2>BPUP Suite</h2>
+            <p>Informazioni contenute nel primo div. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div class="carousel-item">
+            <a href="messanger.html" class="carousel-link">
+                <h2>Messanger</h2>
+                <p>Informazioni contenute nel secondo div. Aliquam erat volutpat. Nulla quis ligula ipsum.</p>
+            </a>
+        </div>
+        <div class="carousel-item">
+            <h2>Work In Progress</h2>
+            <p>Informazioni contenute nel terzo div. Sed do eiusmod tempor incididunt ut labore et dolore magna
+                aliqua.</p>
+        </div>
+        <button class="carousel-control prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-control next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="container">
         <!-- Features Section -->
         <section class="features">
             <div class="container">
@@ -304,125 +58,36 @@
                 </div>
             </div>
         </section>
-
-        <!-- Download Section -->
-        <section id="download" class="download-section">
-            <h2>Scarica Ora</h2>
-            <div class="platform-grid">
-                <div class="platform-card">
-                    <i class="fab fa-android platform-icon"></i>
-                    <h3>Android</h3>
-                    <a href="#" class="platform-btn">
-                        <i class="fab fa-google-play"></i>
-                        Google Play
-                    </a>
-                </div>
-                <div class="platform-card">
-                    <i class="fab fa-apple platform-icon"></i>
-                    <h3>iOS</h3>
-                    <span href="#" class="platform-btn disabled">
-                        <i class="fas fa-hourglass-half"></i>
-                        In arrivo
-                    </span>
-                </div>
-                <div class="platform-card">
-                    <i class="fab fa-windows platform-icon"></i>
-                    <h3>Windows</h3>
-                    <a href="https://github.com/BPUP-Suite/Messanger_Client/releases/download/desktop-windows-linux-v0.0.3-pre-alpha/Messanger.Desktop.Setup.0.0.3.exe" class="platform-btn">
-                        <i class="fab fa-github"></i>
-                        .exe
-                    </a>
-                </div>
-                <div class="platform-card">
-                    <i class="fab fa-linux platform-icon"></i>
-                    <h3>Linux</h3>
-                    <a href="https://github.com/BPUP-Suite/Messanger_Client/releases/download/desktop-windows-linux-v0.0.3-pre-alpha/messanger_desktop_0.0.3_amd64.deb" class="platform-btn">
-                        <i class="fab fa-github"></i>
-                        .deb
-                    </a>
-                    <a href="https://github.com/BPUP-Suite/Messanger_Client/releases/download/desktop-windows-linux-v0.0.3-pre-alpha/Messanger.Desktop-0.0.3.AppImage" class="platform-btn">
-                        <i class="fab fa-github"></i>
-                        .AppImage
-                    </a>
-                </div>
-                <div class="platform-card">
-                    <i class="fab fa-firefox platform-icon"></i>
-                    <h3>Firefox</h3>
-                    <a href="https://addons.mozilla.org/en-US/firefox/addon/bpup-messanger/" class="platform-btn">
-                        <i class="fas fa-puzzle-piece"></i>
-                        Estensione
-                    </a>
-                </div>
-                <div class="platform-card">
-                    <i class="fab fa-chrome platform-icon"></i>
-                    <h3>Chrome</h3>
-                    <span href="#" class="platform-btn">
-                        <i class="fas fa-hourglass-half"></i>
-                        In arrivo
-                    </span>
-                </div>
-                <div class="platform-card">
-                    <i class="fab fa-google platform-icon" style="color: #5c6bc0;"></i>
-                    <h3>WearOS</h3>
-                    <span href="#" class="platform-btn disabled">
-                        <i class="fas fa-hourglass-half"></i>
-                        In arrivo
-                    </span>
-                </div>
-                <div class="platform-card">
-                    <i class="fab fa-apple platform-icon"></i>
-                    <h3>macOS</h3>
-                    <span href="#" class="platform-btn">
-                        <i class="fas fa-hourglass-half"></i>
-                        In arrivo
-                    </span>
-                </div>
-            </div>
-        </section>
-
-        <section class="repo-section">
-            <div class="container">
-                <h2>Open Source Ecosystem</h2>
-                <div class="repo-grid">
-                    <div class="repo-card">
-                        <h3>Core Framework in React</h3>
-                        <p>Architettura principale del sistema di messaggistica</p>
-                        <a href="https://github.com/BPUP-Suite/Messanger_Client" class="platform-btn">
-                            <i class="fab fa-github"></i>
-                            Vedi Codice
-                        </a>
-                    </div>
-                    <div class="repo-card">
-                        <h3>Client Desktop</h3>
-                        <p>Implementazione Desktop per dispositivi Windows e Linux</p>
-                        <a href="https://github.com/BPUP-Suite/Messanger_Client/tree/desktop" class="platform-btn">
-                            <i class="fab fa-github"></i>
-                            Vedi Codice
-                        </a>
-                    </div>
-                    <div class="repo-card">
-                        <h3>Estensioni Browser</h3>
-                        <p>Codice sorgente per tutte le estensioni</p>
-                        <a href="https://github.com/BPUP-Suite/Messanger_Browser_Extension" class="platform-btn">
-                            <i class="fab fa-github"></i>
-                            Vedi Codice
-                        </a>
-                    </div>
-                    <div class="repo-card">
-                        <h3>API Server</h3>
-                        <p>Backend principale del servizio</p>
-                        <a href="https://github.com/BPUP-Suite/Messanger_API" class="platform-btn">
-                            <i class="fab fa-github"></i>
-                            Vedi Codice
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
     </div>
-
-    <footer style="text-align: center; padding: 4rem 0; color: #666;">
+    <footer>
         <p>© 2025 BPUP - Messanger. Tutti i diritti riservati a non so chi.</p>
     </footer>
+    <script>
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        const prevButton = document.querySelector('.carousel-control.prev');
+        const nextButton = document.querySelector('.carousel-control.next');
+        let currentItem = 0;
+
+        function showItem(index) {
+            carouselItems.forEach(item => item.classList.remove('active'));
+            carouselItems[index].classList.add('active');
+        }
+
+        function nextItem() {
+            currentItem = (currentItem + 1) % carouselItems.length;
+            showItem(currentItem);
+        }
+
+        function prevItem() {
+            currentItem = (currentItem - 1 + carouselItems.length) % carouselItems.length;
+            showItem(currentItem);
+        }
+
+        nextButton.addEventListener('click', nextItem);
+        prevButton.addEventListener('click', prevItem);
+
+        setInterval(nextItem, 6000);
+    </script>
 </body>
+
 </html>
