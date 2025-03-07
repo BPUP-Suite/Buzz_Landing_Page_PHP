@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BPUP Suite</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="index_style.css">
+</head>
+
+<body>
+    <div class="carousel">
+        <div class="carousel-item active">
+            <h2>BPUP Suite</h2>
+            <p>Informazioni contenute nel primo div. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+        <div class="carousel-item">
+            <a href="messanger.html" class="carousel-link">
+                <h2>Messanger</h2>
+                <p>Informazioni contenute nel secondo div. Aliquam erat volutpat. Nulla quis ligula ipsum.</p>
+            </a>
+        </div>
+        <div class="carousel-item">
+            <h2>Work In Progress</h2>
+            <p>Informazioni contenute nel terzo div. Sed do eiusmod tempor incididunt ut labore et dolore magna
+                aliqua.</p>
+        </div>
+        <button class="carousel-control prev"><i class="fas fa-chevron-left"></i></button>
+        <button class="carousel-control next"><i class="fas fa-chevron-right"></i></button>
+    </div>
+    <div class="container">
+        <!-- Features Section -->
+        <section class="features">
+            <div class="container">
+                <h2>Perché Scegliere Messanger?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt feature-icon"></i>
+                        <h3>Sicurezza Totale</h3>
+                        <p>Critografia militare e protezione dati 24/7 per le tue conversazioni private</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-comments-dollar feature-icon"></i>
+                        <h3>Completamente Gratuito</h3>
+                        <p>Nessun costo nascosto, nessun abbonamento. Per sempre.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-sync-alt feature-icon"></i>
+                        <h3>Sincronizzazione Istantanea</h3>
+                        <p>Continua da dove hai lasciato su qualsiasi dispositivo</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-headset feature-icon"></i>
+                        <h3>Supporto 24/7</h3>
+                        <p>Assistenza tecnica sempre disponibile in 12 lingue</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <footer>
+        <p>© 2025 BPUP - Messanger. Tutti i diritti riservati a non so chi.</p>
+    </footer>
+    <script>
+        const carouselItems = document.querySelectorAll('.carousel-item');
+        const prevButton = document.querySelector('.carousel-control.prev');
+        const nextButton = document.querySelector('.carousel-control.next');
+        let currentItem = 0;
+
+        function showItem(index) {
+            carouselItems.forEach(item => item.classList.remove('active'));
+            carouselItems[index].classList.add('active');
+        }
+
+        function nextItem() {
+            currentItem = (currentItem + 1) % carouselItems.length;
+            showItem(currentItem);
+        }
+
+        function prevItem() {
+            currentItem = (currentItem - 1 + carouselItems.length) % carouselItems.length;
+            showItem(currentItem);
+        }
+
+        nextButton.addEventListener('click', nextItem);
+        prevButton.addEventListener('click', prevItem);
+
+        setInterval(nextItem, 6000);
+    </script>
+</body>
+
+</html>

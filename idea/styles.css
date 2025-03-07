@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #031a27;
+    font-family: sans-serif;
+    color: #eeeeee;
+}
+
+main > h1 {
+    font-size: 42px;
+}
+
+main > .patch-container {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    gap: 20px;
+}
+
+main section {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+    background-color: #1d536f;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 8px solid #3bbeff;
+}
