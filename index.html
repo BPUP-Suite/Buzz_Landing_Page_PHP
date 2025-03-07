@@ -39,31 +39,6 @@
             color: var(--text-light);
         }
 
-        .cursor {
-            position: fixed;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: rgba(0, 85, 255, 0.3);
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease;
-        }
-
-        .cursor-follower {
-            position: fixed;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--primary);
-            pointer-events: none;
-            z-index: 10000;
-            transform: translate(-50%, -50%);
-            transition: transform 0.1s ease;
-        }
-
         .header {
             position: fixed;
             top: 0;
@@ -588,8 +563,6 @@
     </style>
 </head>
 <body>
-    <div class="cursor"></div>
-    <div class="cursor-follower"></div>
 
     <header class="header">
         <div class="logo-container">
@@ -763,36 +736,8 @@
     </div>
 
     <script>
-        // Cursor effect and interazioni
+        
         document.addEventListener('DOMContentLoaded', function() {
-            const cursor = document.querySelector('.cursor');
-            const cursorFollower = document.querySelector('.cursor-follower');
-            const cards = document.querySelectorAll('.card');
-            const links = document.querySelectorAll('a, .hamburger, .theme-toggle');
-            
-            links.forEach(link => {
-                link.addEventListener('mouseenter', function() {
-                    cursor.style.transform = 'translate(-50%, -50%) scale(2)';
-                    cursorFollower.style.opacity = 0;
-                });
-                
-                link.addEventListener('mouseleave', function() {
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-                    cursorFollower.style.opacity = 1;
-                });
-            });
-            
-            cards.forEach(card => {
-                card.addEventListener('mouseenter', function() {
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1.5)';
-                    cursorFollower.style.opacity = 0.5;
-                });
-                
-                card.addEventListener('mouseleave', function() {
-                    cursor.style.transform = 'translate(-50%, -50%) scale(1)';
-                    cursorFollower.style.opacity = 1;
-                });
-            });
             
             // Creazione delle forme fluttuanti
             const shapes = document.getElementById('shapes');
