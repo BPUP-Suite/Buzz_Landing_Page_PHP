@@ -6,19 +6,14 @@
     <title>BPUP - Innovazione Open Source</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <link rel="stylesheet" href="css/styles_index.css">
+    <link rel="stylesheet" href="css/styles_header.css">
+    <link rel="stylesheet" href="css/styles_footer.css">
 </head>
 <body>
 
     <?php include "header.php"; ?>
 
-    <div class="mobile-menu">
-        <a href="#" class="mobile-link">Home</a>
-        <a href="#projects" class="mobile-link">Progetti</a>
-        <a href="https://github.com/bpup" class="mobile-link">GitHub</a>
-        <a href="#" class="mobile-link">Documentazione</a>
-        <a href="#" class="mobile-link">Roadmap</a>
-        <a href="#" class="mobile-link">Patch Notes</a>
-    </div>
+    
 
     <main class="main">
         <section class="hero">
