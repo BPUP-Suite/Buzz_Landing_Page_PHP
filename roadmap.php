@@ -1,1002 +1,834 @@
+<?php
+include 'config.php';
+
+// Query to get all versions
+$stmt = $conn->prepare("
+    SELECT versione 
+    FROM roadmap 
+    GROUP BY versione
+    ORDER BY 
+        CASE 
+            WHEN versione LIKE '%-pre-alpha%' THEN 1
+            WHEN versione LIKE '%-alpha%' THEN 2
+            WHEN versione LIKE '%-beta%' THEN 3
+            ELSE 4
+        END,
+        versione ASC;
+");
+$stmt->execute();
+$versions = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+// Fetch features for all versions
+$stmtFeatures = $conn->prepare("
+    SELECT 
+        r.id, 
+        r.versione, 
+        r.titolo, 
+        r.descrizione, 
+        r.tags, 
+        r.tipo, 
+        r.data_inizio, 
+        r.data_fine, 
+        r.stato,
+        r.categoria
+    FROM 
+        roadmap r
+    ORDER BY 
+        r.data_inizio ASC
+");
+$stmtFeatures->execute();
+$allFeatures = $stmtFeatures->fetchAll(PDO::FETCH_ASSOC);
+
+// Group features by version and category
+$featuresGrouped = [];
+foreach ($allFeatures as $feature) {
+    $version = $feature['versione'];
+    $category = empty($feature['categoria']) ? 'General' : $feature['categoria'];
+    
+    if (!isset($featuresGrouped[$version])) {
+        $featuresGrouped[$version] = [];
+    }
+    
+    if (!isset($featuresGrouped[$version][$category])) {
+        $featuresGrouped[$version][$category] = [];
+    }
+    
+    $featuresGrouped[$version][$category][] = $feature;
+}
+
+// Count features by status for progress bars
+$versionStats = [];
+foreach ($versions as $version) {
+    if (isset($featuresGrouped[$version])) {
+        $completed = 0;
+        $inProgress = 0;
+        $planned = 0;
+        $total = 0;
+        
+        foreach ($featuresGrouped[$version] as $category => $features) {
+            foreach ($features as $feature) {
+                $status = getItemStatus($feature);
+                $total++;
+                
+                if ($status === 'completato') {
+                    $completed++;
+                } elseif ($status === 'in-corso') {
+                    $inProgress++;
+                } else {
+                    $planned++;
+                }
+            }
+        }
+        
+        $versionStats[$version] = [
+            'completed' => $completed,
+            'inProgress' => $inProgress,
+            'planned' => $planned,
+            'total' => $total,
+            'completedPercentage' => $total > 0 ? round(($completed / $total) * 100) : 0,
+            'inProgressPercentage' => $total > 0 ? round(($inProgress / $total) * 100) : 0,
+            'plannedPercentage' => $total > 0 ? round(($planned / $total) * 100) : 0
+        ];
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Roadmap</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles_roadmap.css">
     <link rel="stylesheet" href="css/styles_header.css">
     <link rel="stylesheet" href="css/styles_footer.css">
-    <title>Product Roadmap</title>
     <style>
         :root {
-            --primary-dark: #0d1b24;
-            --primary-darker: #081218;
-            --primary-light: #1a2c3a;
-            --accent-blue: #1e70aa;
-            --accent-light: #56ccf2;
-            --text-light: #e0e6eb;
-            --text-muted: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --primary-color: #6366f1;
+            --primary-light: #818cf8;
+            --primary-dark: #4f46e5;
+            --secondary-color: #10b981;
+            --completed-color: #10b981;
+            --in-progress-color: #f59e0b;
+            --planned-color: #64748b;
+            --text-color: #1e293b;
+            --text-light: #64748b;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --border-color: #e2e8f0;
+            --header-gradient-start: #6366f1;
+            --header-gradient-end: #8b5cf6;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --rounded-sm: 0.25rem;
+            --rounded-md: 0.375rem;
+            --rounded-lg: 0.5rem;
+            --rounded-xl: 0.75rem;
+            --rounded-2xl: 1rem;
+            --transition-normal: all 0.3s ease;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
         }
 
         body {
-            background-color: var(--primary-dark);
-            color: var(--text-light);
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
+            font-size: 16px;
         }
 
         .container {
-            width: 100%;
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0 20px;
         }
 
-        /* header {
-            background-color: var(--primary-darker);
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            color: var(--text-light);
-            font-weight: bold;
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        
-        .logo span {
-            color: var(--accent-light);
-            margin-left: 8px;
-        }
-        
-        .menu-icon {
-            display: none;
-            cursor: pointer;
-            font-size: 1.5rem;
-        } */
-
-        .page-title {
-            font-size: 2rem;
-            margin: 20px 0;
-            color: var(--text-light);
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .info-bar {
-            background-color: rgba(30, 112, 170, 0.1);
-            border-radius: 4px;
-            padding: 10px 15px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .info-bar span {
-            margin-right: 15px;
-        }
-
-        .info-bar a {
-            color: var(--accent-light);
-            text-decoration: none;
-        }
-
-        .view-controls {
-            display: flex;
-            margin: 20px 0;
-        }
-
-        .view-tab {
-            padding: 10px 20px;
-            background-color: var(--primary-light);
-            color: var(--text-light);
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            font-weight: 500;
-            border-radius: 4px 4px 0 0;
-        }
-
-        .view-tab.active {
-            background-color: var(--accent-blue);
+        header {
+            background: linear-gradient(135deg, var(--header-gradient-start), var(--header-gradient-end));
             color: white;
-        }
-
-        .view-content {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .view-content.active {
-            display: block;
-        }
-
-        /* Release View Styles */
-        .release-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .release-card {
-            background-color: var(--primary-light);
-            border-radius: 6px;
+            padding: 60px 0 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            border-radius: 0 0 var(--rounded-2xl) var(--rounded-2xl);
+            position: relative;
             overflow: hidden;
-            transition: transform 0.3s;
+            box-shadow: var(--shadow-lg);
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 80%);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .roadmap {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 50px;
+            margin-top: 125px;
+        }
+
+        .version-container {
+            border-radius: var(--rounded-xl);
+            overflow: hidden;
+            background-color: var(--card-bg);
+            box-shadow: var(--shadow-md);
+            transition: var(--transition-normal);
             border: 1px solid var(--border-color);
         }
 
-        .release-card:hover {
-            transform: translateY(-5px);
+        .version-container:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
         }
 
-        .release-header {
-            background-color: rgba(30, 112, 170, 0.3);
-            padding: 12px 15px;
+        .version-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+        }
+
+        .version-header-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .release-version {
-            font-size: 1.2rem;
-            font-weight: 600;
+        .version-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .release-date {
+        .version-badge {
             font-size: 0.85rem;
-            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: 500;
         }
 
-        .release-status {
-            display: inline-block;
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            border-radius: 12px;
-            background-color: #2e445a;
+        .collapse-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: var(--transition-normal);
         }
 
-        .status-released {
-            background-color: #10B981;
+        .collapse-icon.rotate {
+            transform: rotate(180deg);
+            background-color: rgba(255, 255, 255, 0.3);
         }
 
-        .status-tentative {
-            background-color: #F59E0B;
+        .progress-container {
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
         }
 
-        .release-content {
-            padding: 15px;
+        .progress-bar {
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: width 0.5s ease;
         }
 
-        .category {
-            margin-bottom: 15px;
+        .progress-completed {
+            background-color: var(--completed-color);
+        }
+
+        .progress-in-progress {
+            background-color: var(--in-progress-color);
+        }
+
+        .progress-planned {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .progress-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dot-completed {
+            background-color: var(--completed-color);
+        }
+
+        .dot-in-progress {
+            background-color: var(--in-progress-color);
+        }
+
+        .dot-planned {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .version-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .version-content.active {
+            display: block;
+        }
+
+        .category-container {
+            margin-bottom: 25px;
+            border-radius: var(--rounded-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
         }
 
         .category-header {
+            background-color: #f1f5f9;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-weight: 600;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            cursor: pointer;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .category-name {
-            font-weight: 500;
-        }
-
-        .category-toggle {
-            transition: transform 0.3s;
-        }
-
-        .category-toggle.expanded {
-            transform: rotate(180deg);
-        }
-
-        .category-items {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease-out;
-        }
-
-        .category-items.expanded {
-            max-height: 500px;
-        }
-
-        .feature-item {
-            margin: 10px 0;
-            padding: 8px;
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .feature-item img {
-            max-width: 100%;
-            border-radius: 4px;
-            margin: 8px 0;
-        }
-
-        .feature-tag {
-            display: inline-block;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin-right: 5px;
-            background-color: var(--accent-blue);
-        }
-
-        /* Progress Tracker Styles */
-        .tracker-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .time-navigation {
-            display: flex;
-            align-items: center;
-        }
-
-        .time-btn {
-            background-color: var(--primary-light);
-            color: var(--text-light);
-            border: none;
-            padding: 8px 15px;
-            margin-right: 5px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .time-btn.active {
-            background-color: var(--accent-blue);
-        }
-
-        .current-period {
-            margin: 0 10px;
-            font-weight: 500;
-        }
-
-        .tracker-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .tracker-header {
-            background-color: var(--primary-light);
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        .tracker-header th {
-            padding: 12px 15px;
-            text-align: left;
-            font-weight: 500;
+            transition: var(--transition-normal);
+            color: var(--text-color);
             border-bottom: 1px solid var(--border-color);
         }
 
-        .time-cell {
-            min-width: 120px;
-            font-size: 0.85rem;
-            text-align: center;
-            color: var(--text-muted);
+        .category-header:hover {
+            background-color: #e2e8f0;
         }
 
-        .team-row {
-            background-color: rgba(255, 255, 255, 0.05);
-            transition: background-color 0.3s;
-        }
-
-        .team-row:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .team-cell {
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--border-color);
-            cursor: pointer;
-        }
-
-        .team-name {
+        .category-title {
             display: flex;
             align-items: center;
+            gap: 10px;
         }
 
-        .toggle-icon {
-            margin-right: 10px;
-            transition: transform 0.3s;
+        .category-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
         }
 
-        .expanded .toggle-icon {
-            transform: rotate(90deg);
-        }
-
-        .timeline-cell {
+        .category-content {
             padding: 0;
-            border-bottom: 1px solid var(--border-color);
+            display: none;
+        }
+
+        .category-content.active {
+            display: block;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .feature-card {
+            border-radius: var(--rounded-lg);
+            padding: 20px;
+            background-color: white;
+            transition: var(--transition-normal);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
             position: relative;
-            min-width: 120px;
+            overflow: hidden;
         }
 
-        .deliverable-bar {
-            position: absolute;
-            height: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            background-color: var(--accent-blue);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .deliverable-bar:hover {
-            background-color: var(--accent-light);
-        }
-
-        /* Tooltips */
-        .tooltip {
-            position: relative;
-        }
-
-        .tooltip:hover .tooltip-content {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .tooltip-content {
-            visibility: hidden;
-            opacity: 0;
-            position: absolute;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--primary-darker);
-            color: var(--text-light);
-            padding: 8px 12px;
-            border-radius: 4px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-            width: 200px;
-            font-size: 0.85rem;
-            z-index: 1;
-            transition: opacity 0.3s, visibility 0.3s;
-        }
-
-        .tooltip-content::after {
+        .feature-card::before {
             content: '';
             position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: var(--primary-darker) transparent transparent transparent;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            transition: var(--transition-normal);
         }
 
-        /* Animations */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
+        .feature-card.completed::before {
+            background-color: var(--completed-color);
         }
 
-        /* Media Queries */
-        @media screen and (max-width: 768px) {
-            .release-grid {
+        .feature-card.in-progress::before {
+            background-color: var(--in-progress-color);
+        }
+
+        .feature-card.planned::before {
+            background-color: var(--planned-color);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-header {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .feature-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            line-height: 1.4;
+        }
+
+        .feature-status {
+            font-size: 0.75rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            white-space: nowrap;
+            margin-left: 10px;
+        }
+
+        .feature-status.completed {
+            background-color: var(--completed-color);
+        }
+
+        .feature-status.in-progress {
+            background-color: var(--in-progress-color);
+        }
+
+        .feature-status.planned {
+            background-color: var(--planned-color);
+        }
+
+        .feature-description {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.6;
+            flex: 1;
+        }
+
+        .feature-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: auto;
+            font-size: 0.85rem;
+        }
+
+        .feature-type {
+            padding: 5px 10px;
+            border-radius: 20px;
+            background-color: #f1f5f9;
+            color: var(--text-color);
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .feature-dates {
+            color: var(--text-light);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tag {
+            background-color: #e0e7ff;
+            color: var(--primary-dark);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+        }
+
+        .loader {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-light);
+        }
+
+        /* Simplified timeline for mobile */
+        .mobile-timeline {
+            display: none;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 40px 0 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .features-grid {
                 grid-template-columns: 1fr;
             }
 
-            .tracker-table {
-                display: block;
-                overflow-x: auto;
+            .version-header {
+                padding: 15px 20px;
             }
 
-            .menu-icon {
-                display: block;
+            .version-title {
+                font-size: 1.1rem;
             }
 
-            .view-tab {
-                flex: 1;
-                text-align: center;
-                font-size: 0.9rem;
+            .progress-stats {
+                flex-wrap: wrap;
+            }
+
+            .feature-title-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .feature-status {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+
+            .feature-meta {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .version-header-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .collapse-icon {
+                position: absolute;
+                right: 15px;
+                top: 15px;
             }
         }
     </style>
 </head>
-
 <body>
-    <!-- <header>
-        <div class="container header-content">
-            <div class="logo">
-                <span>PRODUCT</span> / Roadmap
-            </div>
-            <div class="menu-icon">&#9776;</div>
-        </div>
-    </header> -->
 
-    <?php include "header.php"; ?>
+<?php include "header.php"; ?>
 
     <div class="container">
-        <div id="releaseView" class="view-section">
-            <h1 class="page-title">RELEASE VIEW</h1>
-            <div class="info-bar">
-                <span>Updated Feb. 26th 2025</span>
-                <span>Live Version: 4.01 (<a href="#" class="info-link">more info</a>)</span>
-                <span>Latest Roadmap Roundup: 12/11/2024 (<a href="#" class="info-link">more info</a>)</span>
-            </div>
-
-            <div class="view-controls">
-                <button class="view-tab active" onclick="switchView('release')">RELEASE VIEW</button>
-                <button class="view-tab" onclick="switchView('progress')">PROGRESS TRACKER</button>
-                <button class="view-tab all-categories-btn">EXPAND ALL CATEGORIES</button>
-                <button class="view-tab all-categories-btn">COLLAPSE ALL CATEGORIES</button>
-            </div>
-
-            <div id="releaseContent" class="view-content active">
-                <div class="release-grid">
-                    <!-- 3.23 Release Card -->
-                    <div class="release-card">
-                        <div class="release-header">
-                            <div class="release-version">3.23</div>
-                            <div class="release-status status-released">RELEASED</div>
-                        </div>
-                        <div class="release-date">May 10, 2024</div>
-                        <div class="release-content">
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">AI</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">2 Entries</span>
-                                        Improved NPC pathfinding algorithms
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Characters</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">1 Entry</span>
-                                        New character customization options
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Core Tech</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">5 Entries</span>
-                                        Performance optimizations for low-end systems
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Gameplay</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">12 Entries</span>
-                                        New mission types and gameplay loops
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 3.24 Release Card -->
-                    <div class="release-card">
-                        <div class="release-header">
-                            <div class="release-version">3.24</div>
-                            <div class="release-status status-released">RELEASED</div>
-                        </div>
-                        <div class="release-date">August 28, 2024</div>
-                        <div class="release-content">
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Characters</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">RELEASED</span>
-                                        Additional Player Customization
-                                        <img src="/api/placeholder/400/200" alt="Character customization" />
-                                        <p>Adding new hair and face options for the character customizer.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Gameplay</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">5 Entries</span>
-                                        Enhanced trading mechanics and economy balance
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Locations</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">2 Entries</span>
-                                        New explorable areas added to existing locations
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 4.0 Release Card -->
-                    <div class="release-card">
-                        <div class="release-header">
-                            <div class="release-version">4.0</div>
-                            <div class="release-status status-released">RELEASED</div>
-                        </div>
-                        <div class="release-date">Q4 2024</div>
-                        <div class="release-content">
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">AI</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">RELEASED</span>
-                                        Fauna - Quasi Grazer
-                                        <img src="/api/placeholder/400/200" alt="Quasi Grazer fauna" />
-                                        <p>Introducing the Quasi Grazer fauna into the persistent universe.</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Core Tech</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">2 Entries</span>
-                                        Major engine upgrade and performance improvements
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Gameplay</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">3 Entries</span>
-                                        New profession: Salvage operations
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 4.1 Release Card -->
-                    <div class="release-card">
-                        <div class="release-header">
-                            <div class="release-version">4.1</div>
-                            <div class="release-status status-tentative">TENTATIVE</div>
-                        </div>
-                        <div class="release-date">Q1-Q2 2025</div>
-                        <div class="release-content">
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Characters</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">2 Entries</span>
-                                        Enhanced character animations and expressions
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Gameplay</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">2 Entries</span>
-                                        Dynamic mission system and reputation overhaul
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Locations</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">3 Entries</span>
-                                        New star system with multiple landing zones
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Star Citizen 1.0 Card -->
-                    <div class="release-card">
-                        <div class="release-header">
-                            <div class="release-version">Star Citizen 1.0</div>
-                            <div class="release-status status-tentative">TENTATIVE</div>
-                        </div>
-                        <div class="release-date">TBD</div>
-                        <div class="release-content">
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Characters</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">1 Entry</span>
-                                        Final character progression and skill system
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Core Tech</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">8 Entries</span>
-                                        Server meshing and complete persistence
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="category">
-                                <div class="category-header" onclick="toggleCategory(this)">
-                                    <div class="category-name">Gameplay</div>
-                                    <div class="category-toggle">▼</div>
-                                </div>
-                                <div class="category-items">
-                                    <div class="feature-item">
-                                        <span class="feature-tag">30 Entries</span>
-                                        All core gameplay systems and professions
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="roadmap">
+            <?php if (empty($versions)): ?>
+                <div class="empty-state">
+                    <i class="fas fa-exclamation-circle fa-3x"></i>
+                    <h3>No roadmap data available</h3>
+                    <p>Check back later for updates on our project development roadmap.</p>
                 </div>
-            </div>
-
-            <div id="progressContent" class="view-content">
-                <div class="tracker-controls">
-                    <div class="view-controls">
-                        <button class="view-tab active" onclick="switchTrackerView('teams')">TEAMS</button>
-                        <button class="view-tab" onclick="switchTrackerView('deliverables')">DELIVERABLES</button>
-                    </div>
-
-                    <div class="time-navigation">
-                        <button class="time-btn" onclick="navigateTime('prev')">◀</button>
-                        <div class="current-period">Q2 2025</div>
-                        <button class="time-btn" onclick="navigateTime('next')">▶</button>
-                        <button class="time-btn active">CURRENT QUARTER</button>
-                        <button class="time-btn">FILTERS</button>
-                    </div>
-                </div>
-
-                <div class="tracker-table-container">
-                    <table class="tracker-table">
-                        <thead class="tracker-header">
-                            <tr>
-                                <th>Teams</th>
-                                <th class="time-cell">March</th>
-                                <th class="time-cell">April</th>
-                                <th class="time-cell">May</th>
-                                <th class="time-cell">June</th>
-                                <th class="time-cell">July</th>
-                                <th class="time-cell">August</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SC & SQ42 - CHARACTER ART AND TECH
+            <?php else: ?>
+                <?php foreach ($versions as $version): ?>
+                    <?php if (isset($featuresGrouped[$version])): ?>
+                        <?php $stats = $versionStats[$version]; ?>
+                        <div class="version-container">
+                            <div class="version-header" data-target="version-<?php echo md5($version); ?>">
+                                <div class="version-header-top">
+                                    <div class="version-title">
+                                        <i class="fas fa-cube"></i>
+                                        Version <span class="version-badge"><?php echo htmlspecialchars($version); ?></span>
                                     </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6">
-                                    <div class="deliverable-bar tooltip" style="width: 15%; left: 5%;">
-                                        <div class="tooltip-content">
-                                            <strong>1 deliverable</strong><br>
-                                            Character visual improvements
+                                    <div class="collapse-icon">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                </div>
+                                
+                                <div class="progress-container">
+                                    <?php if ($stats['completedPercentage'] > 0): ?>
+                                        <div class="progress-bar progress-completed" style="width:<?php echo $stats['completedPercentage']; ?>%"></div>
+                                    <?php endif; ?>
+                                    <?php if ($stats['inProgressPercentage'] > 0): ?>
+                                        <div class="progress-bar progress-in-progress" style="width:<?php echo $stats['inProgressPercentage']; ?>%; left:<?php echo $stats['completedPercentage']; ?>%"></div>
+                                    <?php endif; ?>
+                                </div>
+                                
+                                <div class="progress-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-dot dot-completed"></span>
+                                        Completed: <?php echo $stats['completed']; ?>/<?php echo $stats['total']; ?> (<?php echo $stats['completedPercentage']; ?>%)
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-dot dot-in-progress"></span>
+                                        In Progress: <?php echo $stats['inProgress']; ?>/<?php echo $stats['total']; ?> (<?php echo $stats['inProgressPercentage']; ?>%)
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-dot dot-planned"></span>
+                                        Planned: <?php echo $stats['planned']; ?>/<?php echo $stats['total']; ?> (<?php echo $stats['plannedPercentage']; ?>%)
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="version-content" id="version-<?php echo md5($version); ?>">
+                                <?php foreach ($featuresGrouped[$version] as $category => $features): ?>
+                                    <?php 
+                                        // Generate a unique icon for each category
+                                        $categoryFirstLetter = strtoupper(substr($category, 0, 1));
+                                        
+                                        // Generate a category icon based on name
+                                        $categoryIcon = 'fa-layer-group'; // default
+                                        if (stripos($category, 'ui') !== false || stripos($category, 'design') !== false) {
+                                            $categoryIcon = 'fa-palette';
+                                        } elseif (stripos($category, 'api') !== false) {
+                                            $categoryIcon = 'fa-plug';
+                                        } elseif (stripos($category, 'data') !== false || stripos($category, 'database') !== false) {
+                                            $categoryIcon = 'fa-database';
+                                        } elseif (stripos($category, 'auth') !== false) {
+                                            $categoryIcon = 'fa-lock';
+                                        } elseif (stripos($category, 'user') !== false) {
+                                            $categoryIcon = 'fa-user';
+                                        } elseif (stripos($category, 'communication') !== false) {
+                                            $categoryIcon = 'fa-comments';
+                                        } elseif (stripos($category, 'notification') !== false) {
+                                            $categoryIcon = 'fa-bell';
+                                        } elseif (stripos($category, 'performance') !== false) {
+                                            $categoryIcon = 'fa-tachometer-alt';
+                                        } elseif (stripos($category, 'security') !== false) {
+                                            $categoryIcon = 'fa-shield-alt';
+                                        }
+                                    ?>
+                                    <div class="category-container">
+                                        <div class="category-header" data-target="category-<?php echo md5($version . $category); ?>">
+                                            <div class="category-title">
+                                                <span class="category-icon">
+                                                    <i class="fas <?php echo $categoryIcon; ?>"></i>
+                                                </span>
+                                                <?php echo htmlspecialchars($category); ?>
+                                            </div>
+                                            <div class="collapse-icon">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
+                                        </div>
+                                        <div class="category-content" id="category-<?php echo md5($version . $category); ?>">
+                                            <div class="features-grid">
+                                                <?php foreach ($features as $feature): ?>
+                                                    <?php 
+                                                        $status = getItemStatus($feature);
+                                                        $statusClass = getStatusClass($status);
+                                                        $statusIcon = getStatusIcon($status);
+                                                        $tags = parseTags($feature['tags']);
+                                                    ?>
+                                                    <div class="feature-card <?php echo $statusClass; ?>">
+                                                        <div class="feature-header">
+                                                            <div class="feature-title-row">
+                                                                <h3 class="feature-title"><?php echo htmlspecialchars($feature['titolo']); ?></h3>
+                                                                <div class="feature-status <?php echo $statusClass; ?>">
+                                                                    <?php echo $statusIcon; ?> 
+                                                                    <?php echo ucfirst($status); ?>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="feature-description">
+                                                            <?php echo htmlspecialchars($feature['descrizione']); ?>
+                                                        </div>
+                                                        <div class="feature-meta">
+                                                            <span class="feature-type">
+                                                                <?php if ($feature['tipo'] == 'server'): ?>
+                                                                    <i class="fas fa-server"></i> Server-side
+                                                                <?php elseif ($feature['tipo'] == 'client'): ?>
+                                                                    <i class="fas fa-desktop"></i> Client-side
+                                                                <?php else: ?>
+                                                                    <i class="fas fa-code-branch"></i> Full-stack
+                                                                <?php endif; ?>
+                                                            </span>
+                                                            <span class="feature-dates">
+                                                                <i class="fas fa-calendar-alt"></i> 
+                                                                <?php echo formatDate($feature['data_inizio']); ?> - 
+                                                                <?php echo formatDate($feature['data_fine']); ?>
+                                                            </span>
+                                                        </div>
+                                                        <?php if (!empty($tags)): ?>
+                                                            <div class="tags-container">
+                                                                <?php foreach ($tags as $tag): ?>
+                                                                    <span class="tag">
+                                                                        <i class="fas fa-tag"></i> <?php echo htmlspecialchars(trim($tag)); ?>
+                                                                    </span>
+                                                                <?php endforeach; ?>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </div>
+                                                <?php endforeach; ?>
+                                            </div>
                                         </div>
                                     </div>
-                                </td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SC & SQ42 - CORE GAMEPLAY PILLAR
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6">
-                                    <div class="deliverable-bar tooltip" style="width: 40%; left: 0%;">
-                                        <div class="tooltip-content">
-                                            <strong>41 deliverables</strong><br>
-                                            Core gameplay mechanics and features
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SC & SQ42 - VEHICLE CONTENT EU
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6"></td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SC & SQ42 - VEHICLE CONTENT NA
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6"></td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SC - LOCATIONS
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6">
-                                    <div class="deliverable-bar tooltip" style="width: 30%; left: 15%;">
-                                        <div class="tooltip-content">
-                                            <strong>13 deliverables</strong><br>
-                                            New locations and environment improvements
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SQ42 - CHAPTER STRIKE TEAM 0
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6"></td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SQ42 - CHAPTER STRIKE TEAM 1
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6"></td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SQ42 - CHAPTER STRIKE TEAM 2
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6"></td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        SQ42 - SOCIAL STRIKE TEAM
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6"></td>
-                            </tr>
-                            <tr class="team-row">
-                                <td class="team-cell">
-                                    <div class="team-name">
-                                        <span class="toggle-icon">▶</span>
-                                        Z-ARCHIVE - ACTOR FEATURE TEAM
-                                    </div>
-                                </td>
-                                <td class="timeline-cell" colspan="6"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
-    </div>
-
-    <?php include "footer.php"; ?>
 
     <script>
-        // View switching
-        function switchView(view) {
-            const releaseTab = document.querySelector('.view-tab:nth-child(1)');
-            const progressTab = document.querySelector('.view-tab:nth-child(2)');
-            const releaseContent = document.getElementById('releaseContent');
-            const progressContent = document.getElementById('progressContent');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show loader initially
+            document.body.insertAdjacentHTML('afterbegin', '<div id="page-loader" class="loader-container"><div class="loader"></div></div>');
+            
+            setTimeout(() => {
+                document.getElementById('page-loader').style.display = 'none';
+            }, 500);
 
-            if (view === 'release') {
-                releaseTab.classList.add('active');
-                progressTab.classList.remove('active');
-                releaseContent.classList.add('active');
-                progressContent.classList.remove('active');
-            } else {
-                releaseTab.classList.remove('active');
-                progressTab.classList.add('active');
-                releaseContent.classList.remove('active');
-                progressContent.classList.add('active');
-            }
-        }
-
-        // Toggle category expansion
-        function toggleCategory(element) {
-            const categoryItems = element.nextElementSibling;
-            const toggle = element.querySelector('.category-toggle');
-
-            if (categoryItems.classList.contains('expanded')) {
-                categoryItems.classList.remove('expanded');
-                toggle.style.transform = 'rotate(0deg)';
-            } else {
-                categoryItems.classList.add('expanded');
-                toggle.style.transform = 'rotate(180deg)';
-            }
-        }
-
-        // Expand/collapse all categories
-        document.querySelectorAll('.all-categories-btn').forEach((btn, index) => {
-            btn.addEventListener('click', () => {
-                const categoryItems = document.querySelectorAll('.category-items');
-                const toggles = document.querySelectorAll('.category-toggle');
-
-                if (index === 0) { // Expand all
-                    categoryItems.forEach(item => item.classList.add('expanded'));
-                    toggles.forEach(toggle => toggle.style.transform = 'rotate(180deg)');
-                } else { // Collapse all
-                    categoryItems.forEach(item => item.classList.remove('expanded'));
-                    toggles.forEach(toggle => toggle.style.transform = 'rotate(0deg)');
-                }
-            });
-        });
-
-        // Switch tracker view (teams/deliverables)
-        function switchTrackerView(view) {
-            const tabs = document.querySelectorAll('.tracker-controls .view-tab');
-            tabs.forEach(tab => tab.classList.remove('active'));
-
-            if (view === 'teams') {
-                tabs[0].classList.add('active');
-            } else {
-                tabs[1].classList.add('active');
-            }
-
-            // In a real implementation, you would update the table content here
-        }
-
-        // Navigate timeline
-        function navigateTime(direction) {
-            const currentPeriod = document.querySelector('.current-period');
-            const periods = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025', 'Q1 2026'];
-            const currentIndex = periods.indexOf(currentPeriod.textContent);
-
-            if (direction === 'prev' && currentIndex > 0) {
-                currentPeriod.textContent = periods[currentIndex - 1];
-            } else if (direction === 'next' && currentIndex < periods.length - 1) {
-                currentPeriod.textContent = periods[currentIndex + 1];
-            }
-
-            // In a real implementation, you would update the timeline data here
-        }
-
-        // Toggle team expansion (for more details)
-        document.querySelectorAll('.team-name').forEach(team => {
-            team.addEventListener('click', () => {
-                const row = team.closest('.team-row');
-                const icon = team.querySelector('.toggle-icon');
-
-                if (row.classList.contains('expanded')) {
-                    row.classList.remove('expanded');
-                    icon.textContent = '▶';
-                } else {
-                    row.classList.add('expanded');
-                    icon.textContent = '▼';
-
-                    // In a real implementation, you would dynamically add detail rows here
-                }
-            });
-        });
-
-        // Show tooltip on hover for deliverable bars
-        document.querySelectorAll('.deliverable-bar').forEach(bar => {
-            bar.addEventListener('mouseenter', () => {
-                const tooltip = bar.querySelector('.tooltip-content');
-                tooltip.style.visibility = 'visible';
-                tooltip.style.opacity = '1';
+            // Handle version container clicks
+            const versionHeaders = document.querySelectorAll('.version-header');
+            versionHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const targetContent = document.getElementById(targetId);
+                    const icon = this.querySelector('.collapse-icon .fas');
+                    
+                    targetContent.classList.toggle('active');
+                    this.querySelector('.collapse-icon').classList.toggle('rotate');
+                });
             });
 
-            bar.addEventListener('mouseleave', () => {
-                const tooltip = bar.querySelector('.tooltip-content');
-                tooltip.style.visibility = 'hidden';
-                tooltip.style.opacity = '0';
+            // Handle category container clicks
+            const categoryHeaders = document.querySelectorAll('.category-header');
+            categoryHeaders.forEach(header => {
+                header.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const targetId = this.getAttribute('data-target');
+                    const targetContent = document.getElementById(targetId);
+                    const icon = this.querySelector('.collapse-icon .fas');
+                    
+                    targetContent.classList.toggle('active');
+                    this.querySelector('.collapse-icon').classList.toggle('rotate');
+                });
             });
-        });
 
-        // Add responsive handling for small screens
-        function handleResponsive() {
-            if (window.innerWidth <= 768) {
-                // Adjust table view for mobile
-                document.querySelector('.tracker-table-container').style.overflowX = 'auto';
-            } else {
-                document.querySelector('.tracker-table-container').style.overflowX = 'visible';
-            }
-        }
+            // Add animation to feature cards
+            const featureCards = document.querySelectorAll('.feature-card');
+            featureCards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 + (index * 50));
+            });
 
-        // Run on page load and window resize
-        window.addEventListener('load', handleResponsive);
-        window.addEventListener('resize', handleResponsive);
-
-        // Initialize with some expanded categories for demonstration
-        document.querySelectorAll('.category-header').forEach((header, index) => {
-            if (index % 3 === 0) { // Expand every third category for demo
-                toggleCategory(header);
+            // Open first version by default (optional)
+            if (versionHeaders.length > 0) {
+                setTimeout(() => {
+                    versionHeaders[0].click();
+                    
+                    // Open first category in the first version
+                    const firstVersionId = versionHeaders[0].getAttribute('data-target');
+                    const firstVersionCategories = document.querySelectorAll(`#${firstVersionId} .category-header`);
+                    if (firstVersionCategories.length > 0) {
+                        firstVersionCategories[0].click();
+                    }
+                }, 700);
             }
         });
     </script>
 </body>
-
 </html>

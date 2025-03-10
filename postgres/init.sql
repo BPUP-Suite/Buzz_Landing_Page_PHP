@@ -1,5 +1,38 @@
--- Creazione della tabella roadmap per PostgreSQL
+-- Create the roadmap table
 CREATE TABLE IF NOT EXISTS roadmap (
+    id SERIAL PRIMARY KEY,
+    versione VARCHAR(50) NOT NULL,
+    titolo VARCHAR(255) NOT NULL,
+    descrizione TEXT,
+    tags TEXT,
+    tipo VARCHAR(50) CHECK (tipo IN ('server', 'client', 'both')),
+    data_inizio DATE NOT NULL,
+    data_fine DATE NOT NULL,
+    stato VARCHAR(50) CHECK (stato IN ('completato', 'in-corso', 'pianificato', '')),
+    categoria VARCHAR(100)
+);
+
+-- Insert sample data
+INSERT INTO roadmap (versione, titolo, descrizione, tags, tipo, data_inizio, data_fine, stato, categoria)
+VALUES 
+    ('0.0.1-pre-alpha', 'Basic WebRTC Connection', 'Implement basic peer-to-peer WebRTC connection between two clients', 'WebRTC,JavaScript,Socket.io', 'both', '2025-01-01', '2025-01-15', 'completato', 'Communication'),
+    ('0.0.1-pre-alpha', 'Server Authentication', 'Build user authentication system with JWT', 'Node.js,Express,JWT', 'server', '2025-01-05', '2025-01-20', 'completato', 'Authentication'),
+    ('0.0.1-pre-alpha', 'User Interface Design', 'Create responsive UI layouts and components', 'CSS,HTML,Bootstrap', 'client', '2025-01-10', '2025-01-25', 'completato', 'UI/UX'),
+    
+    ('0.0.2-alpha', 'Media Stream Handling', 'Implement audio/video streaming capabilities using WebRTC', 'WebRTC,MediaStream API', 'client', '2025-02-01', '2025-02-15', 'in-corso', 'Communication'),
+    ('0.0.2-alpha', 'Database Schema Design', 'Design and implement PostgreSQL database schema', 'PostgreSQL,Database Design', 'server', '2025-02-05', '2025-02-20', 'in-corso', 'Data Storage'),
+    ('0.0.2-alpha', 'API Endpoints', 'Create RESTful API endpoints for client-server communication', 'Node.js,Express,REST API', 'server', '2025-02-10', '2025-02-25', 'pianificato', 'API'),
+    
+    ('0.1.0-beta', 'Group Video Chat', 'Implement multi-user video conferencing using WebRTC', 'WebRTC,Socket.io,Media Server', 'both', '2025-03-01', '2025-03-25', 'pianificato', 'Communication'),
+    ('0.1.0-beta', 'User Profiles', 'Create user profile management system', 'Node.js,PostgreSQL,File Upload', 'both', '2025-03-05', '2025-03-20', 'pianificato', 'User Management'),
+    ('0.1.0-beta', 'Real-time Notifications', 'Add system for real-time notifications and alerts', 'Socket.io,Node.js,Service Workers', 'both', '2025-03-10', '2025-03-30', 'pianificato', 'Notifications'),
+    
+    ('1.0.0-release', 'Mobile Responsiveness', 'Ensure full mobile compatibility and responsive design', 'CSS,Media Queries,Mobile Testing', 'client', '2025-04-01', '2025-04-15', 'pianificato', 'UI/UX'),
+    ('1.0.0-release', 'Performance Optimization', 'Optimize server and client performance', 'Node.js,Webpack,Caching', 'both', '2025-04-05', '2025-04-25', 'pianificato', 'Performance'),
+    ('1.0.0-release', 'Security Audit', 'Perform security testing and vulnerability assessment', 'Security Testing,Penetration Testing', 'both', '2025-04-10', '2025-04-30', 'pianificato', 'Security');
+
+    -- Creazione della tabella roadmap per PostgreSQL
+CREATE TABLE IF NOT EXISTS patchnotes (
     id SERIAL PRIMARY KEY,
     titolo VARCHAR(255) NOT NULL,
     tags VARCHAR(255),
@@ -10,7 +43,7 @@ CREATE TABLE IF NOT EXISTS roadmap (
 );
 
 -- Inserimento di dati di esempio
-INSERT INTO roadmap (titolo, tags, data_inizio, data_fine, descrizione, stato) VALUES
+INSERT INTO patchnotes (titolo, tags, data_inizio, data_fine, descrizione, stato) VALUES
 ('Versione Alpha', 'frontend,design,core', '2024-08-01', '2024-09-15', 'Prima versione alpha con funzionalità di base del prodotto.', 'completato'),
 ('Versione Beta', 'backend,security,api', '2024-09-20', '2024-11-05', 'Versione beta con integrazione API e miglioramenti di sicurezza.', 'completato'),
 ('Release 1.0', 'frontend,backend,mobile', '2024-11-15', '2025-01-10', 'Prima release ufficiale con supporto mobile completo.', 'in-corso'),
