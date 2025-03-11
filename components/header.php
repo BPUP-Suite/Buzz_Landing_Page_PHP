@@ -23,11 +23,11 @@
 </header>
 
 <div class="mobile-menu">
-    <a href="#" class="mobile-link">Home</a>
-    <a href="#projects" class="mobile-link">Progetti</a>
-    <a href="https://github.com/bpup" class="mobile-link">GitHub</a>
+    <a href="index.php" class="mobile-link">Home</a>
+    <a href="index.php#projects" class="mobile-link">Progetti</a>
+    <a href="https://github.com/BPUP-Suite" class="mobile-link">GitHub</a>
     <a href="#" class="mobile-link">Documentazione</a>
-    <a href="#" class="mobile-link">Roadmap</a>
-    <a href="#" class="mobile-link">Patch Notes</a>
+    <a href="roadmap.php" class="mobile-link">Roadmap</a>
+    <a href="patchnotes.php" class="mobile-link">Patch Notes</a>
 </div>
 

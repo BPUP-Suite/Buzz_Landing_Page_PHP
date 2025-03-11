@@ -174,13 +174,18 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
     }
 
+
     // Calculate visible cards based on viewport width
     function getVisibleCardCount() {
-        // For mobile (width < 768px), show one card at a time
-        if (window.innerWidth <= 768) {
+        // Per mobile (< 768px), mostra una card alla volta
+        if (window.innerWidth < 768) {
             return 1;
         }
-        // For desktop, show multiple cards
+        // Per tablet (< 1200px), mostra due card alla volta 
+        else if (window.innerWidth < 1200) {
+            return 2;
+        }
+        // Per desktop, mostra tre card
         return 3;
     }
 
@@ -245,12 +250,4 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Hamburger menu toggle
-    const hamburger = document.querySelector('.hamburger');
-    const mobileMenu = document.querySelector('.mobile-menu');
-
-    hamburger.addEventListener('click', function () {
-        hamburger.classList.toggle('active');
-        mobileMenu.classList.toggle('active');
-    });
 });

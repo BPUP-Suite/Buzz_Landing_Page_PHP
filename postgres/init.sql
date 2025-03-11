@@ -29,7 +29,15 @@ VALUES
     
     ('1.0.0-release', 'Mobile Responsiveness', 'Ensure full mobile compatibility and responsive design', 'CSS,Media Queries,Mobile Testing', 'client', '2025-04-01', '2025-04-15', 'pianificato', 'UI/UX'),
     ('1.0.0-release', 'Performance Optimization', 'Optimize server and client performance', 'Node.js,Webpack,Caching', 'both', '2025-04-05', '2025-04-25', 'pianificato', 'Performance'),
-    ('1.0.0-release', 'Security Audit', 'Perform security testing and vulnerability assessment', 'Security Testing,Penetration Testing', 'both', '2025-04-10', '2025-04-30', 'pianificato', 'Security');
+    ('1.0.0-release', 'Security Audit', 'Perform security testing and vulnerability assessment', 'Security Testing,Penetration Testing', 'both', '2025-04-10', '2025-04-30', 'pianificato', 'Security'),
+
+    ('1.1.0-release', 'Mobile Responsiveness', 'Ensure full mobile compatibility and responsive design', 'CSS,Media Queries,Mobile Testing', 'client', '2025-04-01', '2025-04-15', 'pianificato', 'UI/UX'),
+    ('1.1.0-release', 'Performance Optimization', 'Optimize server and client performance', 'Node.js,Webpack,Caching', 'both', '2025-04-05', '2025-04-25', 'pianificato', 'Performance'),
+    ('1.1.0-release', 'Security Audit', 'Perform security testing and vulnerability assessment', 'Security Testing,Penetration Testing', 'both', '2025-04-10', '2025-04-30', 'pianificato', 'Security'),
+
+    ('1.2.0-release', 'Mobile Responsiveness', 'Ensure full mobile compatibility and responsive design', 'CSS,Media Queries,Mobile Testing', 'client', '2025-04-01', '2025-04-15', 'pianificato', 'UI/UX'),
+    ('1.2.0-release', 'Performance Optimization', 'Optimize server and client performance', 'Node.js,Webpack,Caching', 'both', '2025-04-05', '2025-04-25', 'pianificato', 'Performance'),
+    ('1.2.0-release', 'Security Audit', 'Perform security testing and vulnerability assessment', 'Security Testing,Penetration Testing', 'both', '2025-04-10', '2025-04-30', 'pianificato', 'Security');
 
     -- Creazione della tabella roadmap per PostgreSQL
 CREATE TABLE IF NOT EXISTS patchnotes (

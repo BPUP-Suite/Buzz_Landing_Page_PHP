@@ -23,27 +23,15 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: var(--text-dark);
-    background-color: var(--light-bg);
-}
-
-body.dark-mode {
-    color: var(--text-light);
     background-color: var(--dark-bg);
+    color: var(--text-light);
+    padding-top: 100px;
+    min-height: 100vh;
 }
 
-.container {
-    max-width: 2000px;
-    margin: 0 auto;
-    background-color: var(--card-light);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    padding: 30px;
-    padding-top: 150px;
-}
-
-body.dark-mode .container {
-    background-color: var(--card-dark);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+body.light-mode {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
 }
 
 .container-header {
@@ -53,35 +41,38 @@ body.dark-mode .container {
 }
 
 h1 {
-    color: var(--text-dark);
+    color: var(--text-light);
     margin-bottom: 10px;
 }
 
-body.dark-mode h1 {
-    color: var(--text-light);
+body.light-mode h1 {
+    color: var(--text-dark);
 }
 
 .view-controls {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    margin: 0 auto 30px;
+    max-width: 100%;
+    padding: 0 20px;
 }
+
 
 .tab-button {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: var(--light-bg);
+    background-color: var(--dark-bg);
     border: none;
     border-radius: 50px;
     cursor: pointer;
     margin: 0 5px;
     transition: var(--transition);
-    color: var(--text-dark);
+    color: var(--text-light);
 }
 
-body.dark-mode .tab-button {
-    background-color: var(--dark-bg);
-    color: var(--text-light);
+body.light-mode .tab-button {
+    background-color: var(--light-bg);
+    color: var(--text-dark);
 }
 
 .tab-button.active {
@@ -112,34 +103,38 @@ body.dark-mode .tab-button {
     }
 }
 
-/* Timeline View Styles */
 .timeline {
     position: relative;
-    max-width: 1200px;
+    max-width: 1600px;
     margin: 0 auto;
+    padding: 0 40px;
 }
 
 .timeline::after {
     content: '';
     position: absolute;
     width: 6px;
-    background-color: var(--primary-light);
-    opacity: 0.3;
+    background-color: var(--primary);
     top: 0;
     bottom: 0;
     left: 50%;
     margin-left: -3px;
-}
-
-body.dark-mode .timeline::after {
-    opacity: 0.2;
+    border-radius: 3px;
 }
 
 .timeline-item {
     padding: 10px 40px;
     position: relative;
     width: 50%;
-    margin-bottom: 30px;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease;
+}
+
+.timeline-item.visible {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .timeline-item::after {
@@ -147,15 +142,12 @@ body.dark-mode .timeline::after {
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: var(--card-light);
-    border: 4px solid var(--primary);
+    right: -12px;
+    background-color: var(--primary);
+    border: 4px solid var(--primary-light);
+    top: 20px;
     border-radius: 50%;
-    top: 15px;
     z-index: 1;
-}
-
-body.dark-mode .timeline-item::after {
-    background-color: var(--card-dark);
 }
 
 .left {
@@ -166,37 +158,32 @@ body.dark-mode .timeline-item::after {
     left: 50%;
 }
 
-.left::after {
-    right: -10px;
-}
-
 .right::after {
-    left: -10px;
+    left: -12px;
 }
 
 .timeline-content {
     padding: 20px;
-    background-color: var(--card-light);
-    border-radius: var(--border-radius);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-    transition: var(--transition);
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-body.dark-mode .timeline-content {
     background-color: var(--card-dark);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    color: var(--text-light);
 }
 
-.timeline-content:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 85, 255, 0.1);
+body.light-mode .timeline-content {
+    background-color: var(--card-light);
+    color: var(--text-dark);
 }
 
-body.dark-mode .timeline-content:hover {
-    box-shadow: 0 10px 30px rgba(0, 85, 255, 0.2);
+.timeline-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-light);
+}
+
+body.light-mode .timeline-title {
+    color: var(--text-dark);
 }
 
 /* Add scrollbar styling for timeline items to match patch cards */
@@ -205,12 +192,12 @@ body.dark-mode .timeline-content:hover {
 }
 
 .timeline-content::-webkit-scrollbar-track {
-    background: var(--light-bg);
+    background: var(--dark-bg);
     border-radius: 10px;
 }
 
-body.dark-mode .timeline-content::-webkit-scrollbar-track {
-    background: var(--dark-bg);
+body.light-mode .timeline-content::-webkit-scrollbar-track {
+    background: var(--light-bg);
 }
 
 .timeline-content::-webkit-scrollbar-thumb {
@@ -230,16 +217,6 @@ body.dark-mode .timeline-content::-webkit-scrollbar-track {
     margin-bottom: 10px;
 }
 
-.timeline-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--text-dark);
-}
-
-body.dark-mode .timeline-title {
-    color: var(--text-light);
-}
-
 .timeline-status {
     display: flex;
     align-items: center;
@@ -255,13 +232,13 @@ body.dark-mode .timeline-title {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
-    color: var(--text-dark);
+    color: var(--text-light);
     opacity: 0.7;
     margin-bottom: 10px;
 }
 
-body.dark-mode .timeline-dates {
-    color: var(--text-light);
+body.light-mode .timeline-dates {
+    color: var(--text-dark);
     opacity: 0.7;
 }
 
@@ -276,41 +253,38 @@ body.dark-mode .timeline-dates {
     padding: 4px 8px;
     font-size: 12px;
     font-weight: 500;
-    background-color: rgba(0, 85, 255, 0.1);
+    background-color: rgba(0, 85, 255, 0.2);
     color: var(--primary);
     border-radius: 50px;
     margin-right: 5px;
     margin-bottom: 5px;
 }
 
-body.dark-mode .tag {
-    background-color: rgba(0, 85, 255, 0.2);
+body.light-mode .tag {
+    background-color: rgba(0, 85, 255, 0.1);
 }
 
 .timeline-description {
     margin-top: 10px;
     font-size: 14px;
-    color: var(--text-dark);
-}
-
-body.dark-mode .timeline-description {
     color: var(--text-light);
 }
 
-/* Improved Release Carousel Styles */
+body.light-mode .timeline-description {
+    color: var(--text-dark);
+}
+
 .carousel-container {
     position: relative;
     width: 100%;
     overflow: hidden;
-    margin: 30px 0 40px;
+    padding: 0 20px;
+    margin: 30px auto;
 }
 
 .carousel-wrapper {
     display: flex;
-    transition: transform 0.3s ease;
-    cursor: grab;
-    min-height: 900px;
-    user-select: none;
+    transition: transform 0.5s ease;
 }
 
 .carousel-wrapper.dragging {
@@ -319,23 +293,24 @@ body.dark-mode .timeline-description {
 }
 
 .patch-card {
-    min-width: 30%;
-    max-width: 30%;
+    min-width: calc(33.333% - 20px);
+    max-width: calc(33.333% - 20px);
     flex: 0 0 auto;
     padding: 30px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     border-radius: var(--border-radius);
     margin: 10px;
-    background-color: var(--card-light);
+    background-color: var(--card-dark);
     overflow-y: auto;
-    max-height: 900px;
+    max-height: 1200px;
     transition: var(--transition);
     scroll-behavior: smooth;
 }
 
-body.dark-mode .patch-card {
-    background-color: var(--card-dark);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+body.light-mode .patch-card {
+    background-color: var(--card-light);
+    color: var(--text-dark); /* Testo nero in light mode */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .patch-card:hover {
@@ -348,25 +323,23 @@ body.dark-mode .patch-card:hover {
 }
 
 .patch-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    color: var(--primary);
-    border-bottom: 2px solid var(--light-bg);
-    padding-bottom: 10px;
+    color: var(--text-light);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
-body.dark-mode .patch-title {
-    border-bottom: 2px solid var(--dark-bg);
+body.light-mode .patch-title {
+    color: var(--text-dark);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .tag-toggle {
     font-size: 16px;
     cursor: pointer;
-    background-color: rgba(0, 85, 255, 0.1);
+    background-color: rgba(0, 85, 255, 0.2);
     padding: 5px 10px;
     border-radius: 50px;
     transition: var(--transition);
@@ -376,33 +349,31 @@ body.dark-mode .patch-title {
     color: var(--primary);
 }
 
-body.dark-mode .tag-toggle {
-    background-color: rgba(0, 85, 255, 0.2);
+body.light-mode .tag-toggle {
+    background-color: rgba(0, 85, 255, 0.1);
 }
 
 .tag-toggle:hover {
-    background-color: rgba(0, 85, 255, 0.2);
+    background-color: rgba(0, 85, 255, 0.3);
     transform: translateY(-3px);
 }
 
-body.dark-mode .tag-toggle:hover {
-    background-color: rgba(0, 85, 255, 0.3);
+body.light-mode .tag-toggle:hover {
+    background-color: rgba(0, 85, 255, 0.2);
 }
 
 .tag-container {
     display: none;
-    margin-bottom: 20px;
-    padding: 15px;
-    background-color: var(--light-bg);
-    border-radius: var(--border-radius);
-    border: 1px solid rgba(0, 85, 255, 0.1);
     flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: rgba(0, 0, 0, 0.2); 
 }
 
-body.dark-mode .tag-container {
-    background-color: var(--dark-bg);
-    border: 1px solid rgba(0, 85, 255, 0.2);
+body.light-mode .tag-container {
+    background-color: rgba(0, 0, 0, 0.05); 
 }
 
 .tag-container.show {
@@ -437,13 +408,12 @@ body.dark-mode .patch-tag:hover {
 }
 
 .patch-content {
-    font-size: 17px;
-    line-height: 1.7;
-    color: var(--text-dark);
+    line-height: 1.6;
+    color: var(--text-light);
 }
 
-body.dark-mode .patch-content {
-    color: var(--text-light);
+body.light-mode .patch-content {
+    color: var(--text-dark);
 }
 
 /* Scrollbar styling */
@@ -452,12 +422,12 @@ body.dark-mode .patch-content {
 }
 
 .patch-card::-webkit-scrollbar-track {
-    background: var(--light-bg);
+    background: var(--dark-bg);
     border-radius: 10px;
 }
 
-body.dark-mode .patch-card::-webkit-scrollbar-track {
-    background: var(--dark-bg);
+body.light-mode .patch-card::-webkit-scrollbar-track {
+    background: var(--light-bg);
 }
 
 .patch-card::-webkit-scrollbar-thumb {
@@ -523,7 +493,13 @@ body.light-mode .tooltip .tooltiptext::after {
     display: none;
 }
 
-/* Responsive styles */
+@media screen and (max-width: 1200px) {
+    .patch-card {
+        min-width: calc(50% - 20px);
+        max-width: calc(50% - 20px);
+    }
+}
+
 @media screen and (max-width: 768px) {
     .timeline::after {
         left: 31px;
@@ -549,8 +525,9 @@ body.light-mode .tooltip .tooltiptext::after {
     }
 
     .patch-card {
-        min-width: 90%;
-        max-width: 90%;
+        min-width: calc(100% - 20px);
+        max-width: calc(100% - 20px);
+        padding: 20px;
     }
 
     .hero h1 {
