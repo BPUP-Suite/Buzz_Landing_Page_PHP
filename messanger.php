@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="messanger_style.css">
+    <link rel="stylesheet" href="css/styles_messanger.css">
     <title>Messanger by BPUP</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <?php include "components/header.php"; ?>
     <div class="container">
         <!-- Hero Section -->
         <section class="hero">
@@ -23,12 +24,7 @@
             </div>
             <div class="phone-mockup">
                 <div class="phone-frame">
-                    <iframe 
-                        src="https://web.messanger.bpup.israiken.it" 
-                        class="phone-iframe"
-                        allow="fullscreen"
-                        loading="lazy">
-                    </iframe>
+                    <iframe src="components/proxy.php"></iframe>    
                 </div>
             </div>
         </section>
@@ -177,9 +173,7 @@
             </div>
         </section>
     </div>
-
-    <footer>
-        <p>© 2025 BPUP - Messanger. Tutti i diritti riservati a non so chi.</p>
-    </footer>
+    <?php include "components/theme.php"; ?>
+    <?php include "components/footer.php"; ?>
 </body>
 </html>

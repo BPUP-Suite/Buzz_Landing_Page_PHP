@@ -1,3 +1,6 @@
+<head>
+    <link rel="stylesheet" href="css/styles_footer.css">
+</head>
 <footer class="footer">
     <div class="footer-content">
         <div class="footer-section">

@@ -1,3 +1,7 @@
+<head>
+    <link rel="stylesheet" href="css/styles_header.css">
+    <script src="js/scripts_header.js" defer></script>
+</head>
 <header class="header">
     <div class="logo-container">
         <div class="logo">BP</div>
@@ -26,3 +30,4 @@
     <a href="#" class="mobile-link">Roadmap</a>
     <a href="#" class="mobile-link">Patch Notes</a>
 </div>
+

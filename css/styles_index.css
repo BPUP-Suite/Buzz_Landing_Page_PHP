@@ -19,16 +19,14 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-body {
-    background-color: var(--light-bg);
-    color: var(--text-dark);
-    overflow-x: hidden;
-    transition: var(--transition);
+html, body {
+    background-color: var(--dark-bg) !important;
+    color: var(--text-light) !important;
 }
 
-body.dark-mode {
-    background-color: var(--dark-bg);
-    color: var(--text-light);
+body.light-mode {
+    background-color: var(--light-bg) !important;
+    color: var(--text-dark) !important;
 }
 
 .main {
@@ -65,14 +63,14 @@ body.dark-mode {
     font-weight: 800;
     margin-bottom: 2.5rem;
     line-height: 1.2;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--text-light) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
-.dark-mode .hero h1 {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--text-light) 100%);
+.light-mode .hero h1 {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -142,18 +140,18 @@ body.dark-mode {
 }
 
 .card {
-    background: var(--card-light);
+    background: var(--card-dark);
     border-radius: var(--border-radius);
     padding: 2rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     transition: var(--transition);
     transform: translateZ(0);
     cursor: pointer;
 }
 
-.dark-mode .card {
-    background: var(--card-dark);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+.light-mode .card {
+    background: var(--card-light);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
 }
 
 .card:hover {
@@ -164,7 +162,7 @@ body.dark-mode {
 .card-icon {
     width: 60px;
     height: 60px;
-    background: rgba(0, 85, 255, 0.1);
+    background: rgba(0, 85, 255, 0.2);
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -174,8 +172,8 @@ body.dark-mode {
     font-size: 1.5rem;
 }
 
-.dark-mode .card-icon {
-    background: rgba(0, 85, 255, 0.2);
+.light-mode .card-icon {
+    background: rgba(0, 85, 255, 0.1);
 }
 
 .card h3 {
@@ -212,13 +210,13 @@ body.dark-mode {
 
 .features {
     padding: 5rem 2rem;
-    background: linear-gradient(135deg, rgba(0, 85, 255, 0.05) 0%, rgba(0, 30, 99, 0.05) 100%);
+    background: linear-gradient(135deg, rgba(0, 85, 255, 0.1) 0%, rgba(0, 30, 99, 0.1) 100%);
     border-radius: var(--border-radius);
     margin: 0 1rem;
 }
 
-.dark-mode .features {
-    background: linear-gradient(135deg, rgba(0, 85, 255, 0.1) 0%, rgba(0, 30, 99, 0.1) 100%);
+.light-mode .features {
+    background: linear-gradient(135deg, rgba(0, 85, 255, 0.05) 0%, rgba(0, 30, 99, 0.05) 100%);
 }
 
 .feature-list {

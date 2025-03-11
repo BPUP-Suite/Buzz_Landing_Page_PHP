@@ -1,8 +1,18 @@
 :root {
-    --primary-color: #4a6cf7;
-    --completed-color: #28a745;
-    --in-progress-color: #fd7e14;
-    --planned-color: #6c757d;
+    --primary: #0055ff;
+    --primary-light: #4d8dff;
+    --secondary: #001e63;
+    --light-bg: #f5f7ff;
+    --dark-bg: #06081a;
+    --text-light: #ffffff;
+    --text-dark: #131526;
+    --card-light: #ffffff;
+    --card-dark: #0d1025;
+    --completed-color: #4d8dff;
+    --in-progress-color: #0055ff;
+    --planned-color: #001e63;
+    --border-radius: 16px;
+    --transition: all 0.3s ease;
 }
 
 * {
@@ -13,28 +23,42 @@
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #333;
-    background-color: #f8f9fa;
+    color: var(--text-dark);
+    background-color: var(--light-bg);
+}
+
+body.dark-mode {
+    color: var(--text-light);
+    background-color: var(--dark-bg);
 }
 
 .container {
     max-width: 2000px;
     margin: 0 auto;
-    background-color: #fff;
+    background-color: var(--card-light);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     padding: 30px;
     padding-top: 150px;
 }
 
-container-header {
+body.dark-mode .container {
+    background-color: var(--card-dark);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.container-header {
     text-align: center;
     margin-bottom: 30px;
     line-height: 3em;
 }
 
 h1 {
-    color: #212529;
+    color: var(--text-dark);
     margin-bottom: 10px;
+}
+
+body.dark-mode h1 {
+    color: var(--text-light);
 }
 
 .view-controls {
@@ -46,17 +70,28 @@ h1 {
 .tab-button {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: #f0f0f0;
+    background-color: var(--light-bg);
     border: none;
-    border-radius: 4px;
+    border-radius: 50px;
     cursor: pointer;
     margin: 0 5px;
-    transition: all 0.3s ease;
+    transition: var(--transition);
+    color: var(--text-dark);
+}
+
+body.dark-mode .tab-button {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
 }
 
 .tab-button.active {
-    background-color: var(--primary-color);
+    background-color: var(--primary);
     color: white;
+}
+
+.tab-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 85, 255, 0.2);
 }
 
 .view {
@@ -72,13 +107,12 @@ h1 {
     from {
         opacity: 0;
     }
-
     to {
         opacity: 1;
     }
 }
 
-/* Timeline View Styles (unchanged) */
+/* Timeline View Styles */
 .timeline {
     position: relative;
     max-width: 1200px;
@@ -89,11 +123,16 @@ h1 {
     content: '';
     position: absolute;
     width: 6px;
-    background-color: #ddd;
+    background-color: var(--primary-light);
+    opacity: 0.3;
     top: 0;
     bottom: 0;
     left: 50%;
     margin-left: -3px;
+}
+
+body.dark-mode .timeline::after {
+    opacity: 0.2;
 }
 
 .timeline-item {
@@ -108,11 +147,15 @@ h1 {
     position: absolute;
     width: 20px;
     height: 20px;
-    background-color: white;
-    border: 4px solid var(--primary-color);
+    background-color: var(--card-light);
+    border: 4px solid var(--primary);
     border-radius: 50%;
     top: 15px;
     z-index: 1;
+}
+
+body.dark-mode .timeline-item::after {
+    background-color: var(--card-dark);
 }
 
 .left {
@@ -133,18 +176,27 @@ h1 {
 
 .timeline-content {
     padding: 20px;
-    background-color: white;
-    border-radius: 6px;
+    background-color: var(--card-light);
+    border-radius: var(--border-radius);
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     max-height: 500px;
     overflow-y: auto;
 }
 
+body.dark-mode .timeline-content {
+    background-color: var(--card-dark);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
 .timeline-content:hover {
     transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 30px rgba(0, 85, 255, 0.1);
+}
+
+body.dark-mode .timeline-content:hover {
+    box-shadow: 0 10px 30px rgba(0, 85, 255, 0.2);
 }
 
 /* Add scrollbar styling for timeline items to match patch cards */
@@ -153,17 +205,22 @@ h1 {
 }
 
 .timeline-content::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--light-bg);
     border-radius: 10px;
 }
 
+body.dark-mode .timeline-content::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
 .timeline-content::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: var(--primary-light);
+    opacity: 0.5;
     border-radius: 10px;
 }
 
 .timeline-content::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
+    background: var(--primary);
 }
 
 .timeline-header {
@@ -176,7 +233,11 @@ h1 {
 .timeline-title {
     font-size: 18px;
     font-weight: bold;
-    color: #212529;
+    color: var(--text-dark);
+}
+
+body.dark-mode .timeline-title {
+    color: var(--text-light);
 }
 
 .timeline-status {
@@ -194,8 +255,14 @@ h1 {
     display: flex;
     justify-content: space-between;
     font-size: 14px;
-    color: #6c757d;
+    color: var(--text-dark);
+    opacity: 0.7;
     margin-bottom: 10px;
+}
+
+body.dark-mode .timeline-dates {
+    color: var(--text-light);
+    opacity: 0.7;
 }
 
 .timeline-tags {
@@ -209,17 +276,25 @@ h1 {
     padding: 4px 8px;
     font-size: 12px;
     font-weight: 500;
-    background-color: rgba(74, 108, 247, 0.1);
-    color: var(--primary-color);
-    border-radius: 4px;
+    background-color: rgba(0, 85, 255, 0.1);
+    color: var(--primary);
+    border-radius: 50px;
     margin-right: 5px;
     margin-bottom: 5px;
+}
+
+body.dark-mode .tag {
+    background-color: rgba(0, 85, 255, 0.2);
 }
 
 .timeline-description {
     margin-top: 10px;
     font-size: 14px;
-    color: #495057;
+    color: var(--text-dark);
+}
+
+body.dark-mode .timeline-description {
+    color: var(--text-light);
 }
 
 /* Improved Release Carousel Styles */
@@ -238,29 +313,6 @@ h1 {
     user-select: none;
 }
 
-.patch-content {
-    font-size: 17px;
-    /* Increased from 16px */
-    line-height: 1.7;
-    /* Increased from 1.6 */
-    color: #333;
-}
-
-/* Navigation buttons - position them better with the larger cards */
-.carousel-nav {
-    display: none;
-}
-
-
-/* Adjust responsive styles for mobile */
-@media screen and (max-width: 768px) {
-    .patch-card {
-        min-width: 95%;
-        max-width: 95%;
-        padding: 30px;
-    }
-}
-
 .carousel-wrapper.dragging {
     cursor: grabbing;
     transition: none;
@@ -271,57 +323,86 @@ h1 {
     max-width: 30%;
     flex: 0 0 auto;
     padding: 30px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
     margin: 10px;
-    background-color: white;
+    background-color: var(--card-light);
     overflow-y: auto;
     max-height: 900px;
-    transition: all 0.3s ease;
+    transition: var(--transition);
     scroll-behavior: smooth;
 }
 
+body.dark-mode .patch-card {
+    background-color: var(--card-dark);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
 .patch-card:hover {
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 85, 255, 0.1);
+}
+
+body.dark-mode .patch-card:hover {
+    box-shadow: 0 20px 40px rgba(0, 85, 255, 0.2);
 }
 
 .patch-title {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
-    color: var(--primary-color);
-    border-bottom: 2px solid #eee;
+    color: var(--primary);
+    border-bottom: 2px solid var(--light-bg);
     padding-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
+body.dark-mode .patch-title {
+    border-bottom: 2px solid var(--dark-bg);
+}
+
 .tag-toggle {
     font-size: 16px;
     cursor: pointer;
-    background-color: rgba(74, 108, 247, 0.1);
+    background-color: rgba(0, 85, 255, 0.1);
     padding: 5px 10px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
+    border-radius: 50px;
+    transition: var(--transition);
     display: flex;
     align-items: center;
     gap: 5px;
+    color: var(--primary);
+}
+
+body.dark-mode .tag-toggle {
+    background-color: rgba(0, 85, 255, 0.2);
 }
 
 .tag-toggle:hover {
-    background-color: rgba(74, 108, 247, 0.2);
+    background-color: rgba(0, 85, 255, 0.2);
+    transform: translateY(-3px);
+}
+
+body.dark-mode .tag-toggle:hover {
+    background-color: rgba(0, 85, 255, 0.3);
 }
 
 .tag-container {
     display: none;
     margin-bottom: 20px;
     padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 6px;
-    border: 1px solid #eee;
+    background-color: var(--light-bg);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 85, 255, 0.1);
     flex-wrap: wrap;
     gap: 8px;
+}
+
+body.dark-mode .tag-container {
+    background-color: var(--dark-bg);
+    border: 1px solid rgba(0, 85, 255, 0.2);
 }
 
 .tag-container.show {
@@ -334,24 +415,36 @@ h1 {
     padding: 6px 12px;
     font-size: 14px;
     font-weight: 500;
-    background-color: rgba(74, 108, 247, 0.1);
-    color: var(--primary-color);
-    border-radius: 4px;
+    background-color: rgba(0, 85, 255, 0.1);
+    color: var(--primary);
+    border-radius: 50px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: all 0.3s ease;
+    transition: var(--transition);
+}
+
+body.dark-mode .patch-tag {
+    background-color: rgba(0, 85, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .patch-tag:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px rgba(0, 85, 255, 0.1);
+}
+
+body.dark-mode .patch-tag:hover {
+    box-shadow: 0 4px 6px rgba(0, 85, 255, 0.2);
 }
 
 .patch-content {
-    font-size: 16px;
-    line-height: 1.6;
-    color: #333;
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--text-dark);
 }
 
+body.dark-mode .patch-content {
+    color: var(--text-light);
+}
 
 /* Scrollbar styling */
 .patch-card::-webkit-scrollbar {
@@ -359,17 +452,22 @@ h1 {
 }
 
 .patch-card::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: var(--light-bg);
     border-radius: 10px;
 }
 
+body.dark-mode .patch-card::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
 .patch-card::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: var(--primary-light);
+    opacity: 0.5;
     border-radius: 10px;
 }
 
 .patch-card::-webkit-scrollbar-thumb:hover {
-    background: #a1a1a1;
+    background: var(--primary);
 }
 
 /* Tooltip styles */
@@ -382,10 +480,10 @@ h1 {
 .tooltip .tooltiptext {
     visibility: hidden;
     width: 200px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--card-dark);
+    color: var(--text-light);
     text-align: center;
-    border-radius: 6px;
+    border-radius: var(--border-radius);
     padding: 10px;
     position: absolute;
     z-index: 1;
@@ -396,6 +494,10 @@ h1 {
     transition: opacity 0.3s;
 }
 
+body.light-mode .tooltip .tooltiptext {
+    background-color: var(--secondary);
+}
+
 .tooltip .tooltiptext::after {
     content: "";
     position: absolute;
@@ -404,12 +506,21 @@ h1 {
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
-    border-color: #333 transparent transparent transparent;
+    border-color: var(--card-dark) transparent transparent transparent;
+}
+
+body.light-mode .tooltip .tooltiptext::after {
+    border-color: var(--secondary) transparent transparent transparent;
 }
 
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+/* Carousel navigation - position them better with the larger cards */
+.carousel-nav {
+    display: none;
 }
 
 /* Responsive styles */
@@ -440,5 +551,17 @@ h1 {
     .patch-card {
         min-width: 90%;
         max-width: 90%;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .section-title {
+        font-size: 2rem;
     }
 }
