@@ -17,6 +17,7 @@
     color: var(--text-light);
     padding: 3rem 2rem;
     text-align: center;
+    margin-top: 3rem;
 }
 
 .footer-content {
