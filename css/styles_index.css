@@ -331,3 +331,359 @@ body.light-mode {
         grid-template-columns: 1fr;
     }
 }
+
+.cta-button {
+  display: inline-block;
+  padding: 1.2rem 2.5rem;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 50px;
+  font-size: 1.2rem;
+  margin-top: 2rem;
+  transition: var(--transition);
+}
+
+.cta-button:hover {
+  background: var(--primary-light);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 85, 255, 0.2);
+}
+
+/* Features Section */
+.features {
+  border-radius: var(--border-radius);
+  padding: 6rem 0;
+  background: rgba(0, 85, 255, 0.1);
+}
+
+.light-mode .features {
+  background: rgba(0, 85, 255, 0.05);
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 3rem;
+  margin-top: 4rem;
+}
+
+.feature-card {
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  background: var(--card-dark);
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: var(--transition);
+}
+
+.light-mode .feature-card {
+  background: var(--card-light);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 85, 255, 0.1);
+}
+
+.feature-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+  margin-bottom: 1.5rem;
+}
+
+/* Download Section */
+.download-section {
+  padding: 6rem 0;
+}
+
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.platform-card {
+  background: var(--card-dark);
+  padding: 2rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--transition);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.light-mode .platform-card {
+  background: var(--card-light);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.platform-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 85, 255, 0.1);
+}
+
+.platform-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--primary);
+}
+
+.platform-btn { 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  padding: 1rem;
+  margin-top: 1.5rem;
+  background: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: var(--transition);
+}
+
+.platform-btn i {
+  font-size: 1.2rem;
+}
+
+.platform-btn:hover {
+  gap: 1.2rem;
+  background: var(--primary-light);
+  box-shadow: 0 10px 20px rgba(0, 85, 255, 0.2);
+}
+
+.platform-btn.disabled {
+  background: rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+}
+
+body.light-mode .platform-btn.disabled {
+  background: rgba(41, 41, 41, 0.479);
+}
+
+/* Testi e titoli */
+h1 {
+  font-size: 3.5rem;
+  margin-bottom: 1.5rem;
+  color: linear-gradient(135deg, var(--primary) 0%, var(--text-light) 100%);
+  -webkit-text-fill-color: transparent;
+}
+
+.light-mode h1 {
+  color: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  -webkit-text-fill-color: transparent;
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+ul {
+  list-style: none;
+  margin: 2rem 0;
+}
+
+.repo-section {
+  background: rgba(0, 85, 255, 0.1);
+  padding: 6rem 0;
+  border-radius: var(--border-radius);
+  margin: 4rem 0;
+}
+
+.light-mode .repo-section {
+  background: rgba(0, 85, 255, 0.05);
+}
+
+.repo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-top: 3rem;
+}
+
+.repo-card {
+    background: var(--card-dark);
+    padding: 2rem;
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(0, 85, 255, 0.3);
+    transition: var(--transition);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .light-mode .repo-card {
+    background: var(--card-light);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+  
+  .repo-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 85, 255, 0.1);
+  }
+
+  .linux-download-container {
+    position: relative;
+    width: 100%;
+  }
+  
+  .linux-main-btn {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .linux-dropdown {
+    position: absolute;
+    bottom: calc(100% + 8px); /* Position above instead of below */
+    top: auto; /* Remove top positioning */
+    left: 0;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100; /* Increased z-index */
+    background: var(--card-dark);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3); /* Adjust shadow direction */
+    padding: 8px;
+  }
+
+.light-mode .linux-dropdown {
+  background: var(--card-light);
+}
+
+.linux-dropdown.active {
+  display: flex;
+}
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .linux-dropdown {
+      position: relative;
+      bottom: auto; /* Reset bottom positioning on mobile */
+      top: -8px; /* Negative top margin to position above */
+      margin-bottom: 8px; /* Add space below */
+      box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3), 0 5px 30px rgba(0, 0, 0, 0.3); /* Shadow on both sides for mobile */
+    }
+  
+  .platform-card {
+    padding: 1.5rem;
+  }
+  
+  .platform-icon {
+    font-size: 2.5rem;
+  }
+  
+  .platform-btn {
+    padding: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .platform-card {
+    padding: 1.25rem;
+  }
+  
+  .platform-icon {
+    font-size: 2.2rem;
+  }
+  
+  .platform-btn {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+}
+
+.repo-section {
+    background: rgba(0, 85, 255, 0.1);
+    padding: 6rem 2rem; 
+    border-radius: var(--border-radius);
+    margin: 4rem auto; 
+    max-width: 1200px; 
+}
+  
+.light-mode .repo-section {
+    background: rgba(0, 85, 255, 0.05);
+}
+
+.download-section {
+    padding: 6rem 0;
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+
+/* Linux dropdown container and button styles */
+.linux-download-container {
+  position: relative;
+  width: 100%;
+  z-index: 50; /* Higher z-index for proper stacking */
+}
+
+.linux-main-btn {
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Arrow icon style and animation */
+.linux-main-btn .fa-chevron-down {
+  transition: transform 0.3s ease;
+}
+
+.linux-download-container.active .linux-main-btn .fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+/* Dropdown menu with animation */
+.linux-dropdown {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  top: auto;
+  left: 0;
+  right: 0;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+  background: var(--card-dark);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.light-mode .linux-dropdown {
+  background: var(--card-light);
+}
+
+.linux-dropdown.active {
+  display: flex;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Linux dropdown options */
+.linux-option {
+  margin-top: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s ease;
+}
+
+.linux-option:hover {
+  transform: translateX(5px);
+}
+

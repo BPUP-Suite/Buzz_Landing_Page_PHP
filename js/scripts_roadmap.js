@@ -1,10 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Show loader initially
-    document.body.insertAdjacentHTML('afterbegin', '<div id="page-loader" class="loader-container"><div class="loader"></div></div>');
-    
-    setTimeout(() => {
-        document.getElementById('page-loader').style.display = 'none';
-    }, 500);
 
     // Handle version container clicks
     const versionHeaders = document.querySelectorAll('.version-header');

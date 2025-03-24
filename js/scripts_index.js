@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-            
     // Creazione delle forme fluttuanti
     const shapes = document.getElementById('shapes');
     for (let i = 0; i < 15; i++) {
@@ -53,6 +52,51 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
     
+    // Linux dropdown functionality
+    const linuxMainBtn = document.querySelector('.linux-main-btn');
+    const linuxDropdown = document.querySelector('.linux-dropdown');
+    const linuxContainer = document.querySelector('.linux-download-container');
+    
+    if (linuxMainBtn && linuxDropdown && linuxContainer) {
+        console.log("Linux button found");
+        
+        linuxMainBtn.addEventListener('click', function(event) {
+            console.log("Linux button clicked");
+            event.preventDefault();
+            event.stopPropagation();
+            
+            // Toggle active class on container first
+            linuxContainer.classList.toggle('active');
+            
+            // Then handle the dropdown visibility
+            if (linuxContainer.classList.contains('active')) {
+                linuxDropdown.style.display = 'flex';
+                // Force browser reflow to enable animation
+                void linuxDropdown.offsetWidth;
+                linuxDropdown.classList.add('active');
+            } else {
+                // Wait for animation to complete before hiding
+                linuxDropdown.classList.remove('active');
+                setTimeout(() => {
+                    if (!linuxContainer.classList.contains('active')) {
+                        linuxDropdown.style.display = 'none';
+                    }
+                }, 300); // Match the CSS transition duration
+            }
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.linux-download-container')) {
+                linuxContainer.classList.remove('active');
+                linuxDropdown.classList.remove('active');
+                setTimeout(() => {
+                    if (!linuxContainer.classList.contains('active')) {
+                        linuxDropdown.style.display = 'none';
+                    }
+                }, 300);
+            }
+        });
+    }
 });
