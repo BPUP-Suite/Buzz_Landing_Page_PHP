@@ -320,6 +320,7 @@ body.light-mode .timeline-description {
     transition: none;
 }
 
+/* Modifica alla dimensione delle patch card */
 .patch-card {
     min-width: calc(33.333% - 20px);
     max-width: calc(33.333% - 20px);
@@ -329,8 +330,11 @@ body.light-mode .timeline-description {
     border-radius: var(--border-radius);
     margin: 10px;
     background-color: var(--card-dark);
-    max-height: 1200px;
+    height: 70vh; /* Ridotto da 90vh a 70vh per essere più compatto */
+    display: flex;
+    flex-direction: column;
     transition: var(--transition);
+    overflow: hidden; /* Evita che il contenuto fuoriesca */
 }
 
 body.light-mode .patch-card {
@@ -433,14 +437,15 @@ body.dark-mode .patch-tag:hover {
     box-shadow: 0 4px 6px rgba(0, 85, 255, 0.2);
 }
 
+/* Struttura della card */
 .patch-content {
-    line-height: 1.6;
-    scroll-behavior: smooth;
-    max-height: 1000px;
-    overflow-y: auto; 
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    overflow-y: auto;
     scrollbar-width: thin;
-    color: var(--text-light);
     -webkit-overflow-scrolling: touch;
+    color: var(--text-light);
 }
 
 body.light-mode .patch-content {
@@ -528,7 +533,7 @@ body.light-mode .tooltip .tooltiptext::after {
     .patch-card {
         min-width: calc(50% - 20px);
         max-width: calc(50% - 20px);
-        max-height: calc(100vh - 200px);
+        height: 75vh; /* Leggermente più grande su tablet */
     }
 
     .patch-content {
@@ -569,7 +574,7 @@ body.light-mode .tooltip .tooltiptext::after {
     .patch-card {
         min-width: calc(100% - 20px);
         max-width: calc(100% - 20px);
-        max-height: calc(100vh - 200px);
+        height: 80vh; /* Mantenuto più grande su mobile per leggibilità */
         padding: 20px;
         scroll-snap-align: center;
     }
@@ -589,4 +594,136 @@ body.light-mode .tooltip .tooltiptext::after {
     .section-title {
         font-size: 2rem;
     }
+}
+
+/* Aggiunte per le nuove funzionalità */
+
+.patch-dates {
+    display: flex;
+    justify-content: flex-start;
+    font-size: 14px;
+    color: var(--text-light);
+    opacity: 0.7;
+    margin: 10px 0;
+}
+
+body.light-mode .patch-dates {
+    color: var(--text-dark);
+}
+
+.patch-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.section-title {
+    font-size: 18px;
+    color: var(--primary);
+    margin: 20px 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid rgba(0, 85, 255, 0.2);
+}
+
+/* Altezza fissa per la prima sezione (features) */
+.feature-section {
+    margin-bottom: 20px;
+    min-height: 120px; /* Ridotto da 150px */
+    max-height: 30vh; /* Limita l'altezza nel caso di molte features */
+    overflow-y: auto; /* Aggiunge scrolling se necessario */
+}
+
+.feature-list, .bug-list, .improvement-list, .issues-list {
+    list-style-type: none;
+    padding-left: 5px;
+}
+
+.feature-list li, .bug-list li, .improvement-list li, .issues-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.feature-list li:before, .bug-list li:before, .improvement-list li:before, .issues-list li:before {
+    content: "•";
+    color: var(--primary);
+    font-size: 18px;
+    position: absolute;
+    left: 0;
+    top: -2px;
+}
+
+/* Stili per i collapsible */
+.collapsible-section {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.collapsible-button {
+    width: 100%;
+    background-color: rgba(0, 85, 255, 0.1);
+    color: var(--primary);
+    border: none;
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+body.light-mode .collapsible-button {
+    background-color: rgba(0, 85, 255, 0.05);
+}
+
+.collapsible-button:hover {
+    background-color: rgba(0, 85, 255, 0.2);
+}
+
+.collapsible-button i {
+    transition: transform 0.3s ease;
+}
+
+.collapsible-button.active i {
+    transform: rotate(180deg);
+}
+
+.collapsible-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 8px 8px;
+    padding: 0 15px;
+}
+
+body.light-mode .collapsible-content {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.collapsible-content.active {
+    max-height: 500px;
+    padding: 15px;
+}
+
+/* Container per le sezioni collassabili che le mantiene tutte allineate */
+.collapsible-container {
+    display: flex;
+    flex-direction: column;
+    margin-top: auto; 
+    margin-bottom: 10px; /* Aggiunto per dare un po' di spazio in fondo */
+}
+
+/* Assicura che ogni sezione collassabile abbia la stessa altezza iniziale */
+.collapsible-section {
+    margin-bottom: 15px;
+    border-radius: 8px;
+    overflow: hidden;
 }

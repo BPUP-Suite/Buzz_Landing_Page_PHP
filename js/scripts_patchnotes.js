@@ -17,6 +17,23 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Handle collapsible sections
+    const collapsibleButtons = document.querySelectorAll('.collapsible-button');
+    
+    collapsibleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Toggle active class on button
+            this.classList.toggle('active');
+            
+            // Get target content ID
+            const targetId = this.getAttribute('data-target');
+            const targetContent = document.getElementById(targetId);
+            
+            // Toggle active class on content
+            targetContent.classList.toggle('active');
+        });
+    });
+
     // Make timeline items appear on scroll
     const timelineItems = document.querySelectorAll('.timeline-item');
 
@@ -315,4 +332,23 @@ document.addEventListener('DOMContentLoaded', function () {
     
     // Initialize the carousel
     initCarousel();
+
+    // Animate timeline items as they come into view
+    function handleIntersection(entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    }
+
+    const observer = new IntersectionObserver(handleIntersection, {
+        root: null,
+        threshold: 0.1
+    });
+
+    document.querySelectorAll('.timeline-item').forEach(item => {
+        observer.observe(item);
+    });
 });

@@ -1,64 +1,43 @@
 <?php
-include 'components/config.php';
+include_once "components/config.php";
+
+// Funzione per ottenere i patchnotes
+function getPatchnotes() {
+    global $conn;
+    
+    try {
+        // Usa la connessione PDO esistente
+        $stmt = $conn->prepare("SELECT * FROM patchnotes ORDER BY data_inizio DESC");
+        $stmt->execute();
+        $patchnotes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        return $patchnotes;
+    } catch (PDOException $e) {
+        // Gestione dell'errore
+        error_log("Errore nel recupero dei patchnotes: " . $e->getMessage());
+        return [];
+    }
+}
 
 // Funzione per formattare le date
-function formatDate($date)
-{
-    return date("d/m/Y", strtotime($date));
+function formatDate($date) {
+    $timestamp = strtotime($date);
+    return date('d/m/Y', $timestamp);
 }
 
-// Funzione per determinare lo stato di un elemento
-function getItemStatus($item)
-{
-    $today = date('Y-m-d');
-
-    if (isset($item['stato']) && !empty($item['stato'])) {
-        return $item['stato'];
-    } else if ($today > $item['data_fine']) {
-        return 'completato';
-    } else if ($today >= $item['data_inizio'] && $today <= $item['data_fine']) {
-        return 'in-corso';
-    } else {
-        return 'pianificato';
-    }
-}
-
-// Funzione per ottenere la classe CSS in base allo stato
-function getStatusClass($status)
-{
-    switch ($status) {
-        case 'completato':
-            return 'completed';
-        case 'in-corso':
-            return 'in-progress';
-        case 'pianificato':
-            return 'planned';
-        default:
-            return '';
-    }
-}
-
-// Funzione per ottenere l'icona in base allo stato
-function getStatusIcon($status)
-{
-    switch ($status) {
-        case 'completato':
-            return '<i class="fas fa-check-circle"></i>';
-        case 'in-corso':
-            return '<i class="fas fa-spinner fa-spin"></i>';
-        case 'pianificato':
-            return '<i class="fas fa-calendar-alt"></i>';
-        default:
-            return '';
-    }
-}
-
-// Funzione per convertire i tag da stringa a array
-function parseTags($tagsString)
-{
-    if (empty($tagsString))
-        return [];
+// Funzione per analizzare i tag
+function parseTags($tagsString) {
+    if (empty($tagsString)) return [];
     return explode(',', $tagsString);
 }
 
+// Funzione per dividere testo con punto e virgola in array
+function splitTextByDelimiter($text) {
+    if (empty($text)) return [];
+    $items = explode(';', $text);
+    return array_map('trim', $items);
+}
+
+// Ottieni i dati
+$patchnotesItems = getPatchnotes();
 ?>
