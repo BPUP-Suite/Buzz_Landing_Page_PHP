@@ -437,7 +437,7 @@ body.light-mode {
   color: var(--primary);
 }
 
-.platform-btn { 
+.platform-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -449,6 +449,9 @@ body.light-mode {
   text-decoration: none;
   border-radius: 10px;
   transition: var(--transition);
+  border: none;
+  outline: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .platform-btn i {
@@ -539,6 +542,12 @@ ul {
   .linux-main-btn {
     width: 100%;
     justify-content: space-between;
+    border: none;
+    outline: none;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 1rem;
+    font-weight: normal;
+    cursor: pointer;
   }
   
   .linux-dropdown {

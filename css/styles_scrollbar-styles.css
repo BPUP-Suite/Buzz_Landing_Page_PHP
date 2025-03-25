@@ -1,0 +1,90 @@
+/* Custom Scrollbar for Chrome, Edge and other webkit browsers */
+:root {
+    --scrollbar-thumb-bg: rgba(0, 85, 255, 0.25) !important; /* Molto più trasparente */
+    --scrollbar-thumb-hover-bg: rgba(0, 85, 255, 0.4) !important; /* Più trasparente anche in hover */
+    --scrollbar-size: 8px;
+    --scrollbar-border-radius: 8px;
+}
+
+/* ===== Main document scrollbar ===== */
+::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+    background-color: transparent; /* Base completamente trasparente */
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: var(--scrollbar-border-radius);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-bg);
+    border-radius: var(--scrollbar-border-radius);
+    transition: background 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Bordo più sottile e trasparente */
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1); /* Leggera ombra interna */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover-bg);
+}
+
+/* ===== Specific scrollable elements ===== */
+.patch-content::-webkit-scrollbar,
+.timeline-description::-webkit-scrollbar,
+.feature-section::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: transparent;
+}
+
+.patch-content::-webkit-scrollbar-track,
+.timeline-description::-webkit-scrollbar-track,
+.feature-section::-webkit-scrollbar-track {
+    background-color: transparent;
+    border-radius: 6px;
+}
+
+.patch-content::-webkit-scrollbar-thumb,
+.timeline-description::-webkit-scrollbar-thumb,
+.feature-section::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb-bg);
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+}
+
+.patch-content::-webkit-scrollbar-thumb:hover,
+.timeline-description::-webkit-scrollbar-thumb:hover,
+.feature-section::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover-bg);
+}
+
+/* ===== Hide scrollbar while maintaining functionality ===== */
+.hide-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari and Opera */
+}
+
+/* ===== Per far andare la scrollbar sotto la navbar ===== */
+header, .header, nav, .navbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;  /* Alto valore per assicurarsi che sia sopra altri elementi */
+}
+
+/* Firefox scrollbar styling */
+* {
+    scrollbar-color: var(--scrollbar-thumb-bg) transparent;
+    scrollbar-width: thin;
+}
+
+/* Fix per assicurare la trasparenza */
+html, body {
+    scrollbar-color: var(--scrollbar-thumb-bg) transparent;
+}

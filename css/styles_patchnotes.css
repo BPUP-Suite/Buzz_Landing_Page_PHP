@@ -49,6 +49,24 @@ body.light-mode h1 {
     color: var(--text-dark);
 }
 
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    padding-top: 100px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#timeline-view, #release-view {
+    flex: 1;
+}
+
+footer {
+    margin-top: auto;
+}
+
 .view-controls {
     display: flex;
     justify-content: center;
