@@ -6,7 +6,7 @@
     <title>BPUP - Innovazione Open Source</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <link rel="stylesheet" href="css/styles_index.css">
-    <link rel="stylesheet" href="css/scrollbar-styles.css">
+    <link rel="stylesheet" href="css/styles_scrollbar-styles.css">
     <style>
         html, body {
             height: 100%;
