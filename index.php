@@ -22,8 +22,8 @@
             </div>
         </section>
 
-                <!-- Download Section -->
-                <section id="download" class="download-section">
+        <!-- Download Section -->
+        <section id="download" class="download-section">
             <h2>Download</h2>
             <div class="platform-grid">
                 <div class="platform-card">
