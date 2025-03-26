@@ -40,6 +40,7 @@
             <h2>Pagina in costruzione</h2>
             <p style="font-size: 18px; margin-top: 20px;">La documentazione completa di BPUP sarà disponibile nei prossimi mesi.</p>
             <p style="margin-top: 30px;">Grazie per la pazienza mentre lavoriamo per migliorare la piattaforma.</p>
+            <p style="margin-top: 40px;">Attualmente è comunque disponibile parte della documentazione dell'api sulla repo del server. Clicca <a href="https://github.com/BPUP-Suite/MessangerAPI">qui</a></p>
         </div>
     </div>
 
