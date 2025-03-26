@@ -736,3 +736,160 @@ ul {
         height: 50px;
     }
 }
+
+/* Button container styling */
+.buttons-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-body {
+  display: inline-flex;
+  margin-left: 15px;
+  vertical-align: middle;
+}
+
+.available-for-btn {
+  font-family: system-ui, math;
+  --animation: 2s ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  column-gap: 2px;
+  /* Dark mode styling (default) */
+  color: var(--text-light);
+  background-color: var(--card-dark);
+  border-radius: 100px;
+  padding: 0.6rem 1rem 0.6rem 0.4rem;
+  outline: none;
+  border: none;
+  font-weight: 600;
+  position: relative;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* Light mode styling */
+.light-mode .available-for-btn {
+  color: var(--secondary);
+  background-color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover states */
+.available-for-btn:hover {
+  background-color: var(--secondary);
+}
+
+.light-mode .available-for-btn:hover {
+  background-color: var(--light-bg);
+}
+
+/* Active states */
+.available-for-btn:active {
+  background-color: var(--primary);
+  color: var(--text-light);
+  border: solid 2px var(--primary-light);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .button-body {
+    display: block;
+    margin-left: 0;
+    margin-top: 15px;
+  }
+}
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border: solid 2px var(--primary-light);
+  border-radius: 50%;
+  margin: 0 10px;
+  background-color: transparent;
+  animation: circle-keys var(--animation);
+}
+
+.circle .dot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  animation: dot-keys var(--animation);
+}
+
+.circle .outline {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  animation: outline-keys var(--animation);
+}
+.circle:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.circle:nth-child(2) .dot {
+  animation-delay: 0.3s;
+}
+.circle:nth-child(1) .outline {
+  animation-delay: 0.9s;
+}
+.circle:nth-child(2) .outline {
+  animation-delay: 1.2s;
+}
+@keyframes circle-keys {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes dot-keys {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(0);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes outline-keys {
+  0% {
+    transform: scale(0);
+    outline: solid 20px var(--primary-light);
+    outline-offset: 0;
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    outline: solid 0 transparent;
+    outline-offset: 20px;
+    opacity: 0;
+  }
+}

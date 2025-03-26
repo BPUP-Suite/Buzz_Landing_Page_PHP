@@ -17,7 +17,20 @@
             <div class="floating-shapes" id="shapes"></div>
             <h1>Buzz</h1>
             <p>BUZZ è un gruppo di studenti universitari dedicati allo sviluppo di applicazioni open source, soluzioni di messaggistica sicura e strumenti innovativi per la comunità.</p>
-            <a href="#download" class="btn">Scaricala subito</a>
+            <div class="buttons-container">
+                <a href="#download" class="btn">Scaricala subito</a>
+                <div class="button-body">
+                    <a href="https://web.messanger.bpup.israiken.it">
+                        <button class="available-for-btn">
+                            <div class="circle">
+                            <div class="dot"></div>
+                            <div class="outline"></div>
+                            </div>
+                            Or try the web version
+                        </button>
+                    </a>
+                </div>
+            </div>
             <div class="scroll-indicator">
                 <div class="scroll-dot"></div>
             </div>

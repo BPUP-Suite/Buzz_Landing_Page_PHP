@@ -9,17 +9,17 @@
         <div class="footer-section">
             <h4>Link Rapidi</h4>
             <ul class="footer-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="documentation.php">Documentazione</a></li>
-                <li><a href="roadmap.php">Roadmap</a></li>
+                <li><a href="/index.php">Home</a></li>
+                <li><a href="/documentation.php">Documentazione</a></li>
+                <li><a href="/roadmap.php">Roadmap</a></li>
             </ul>
         </div>
         <div class="footer-section">
             <h4>Risorse</h4>
             <ul class="footer-links">
                 <li><a href="https://github.com/BPUP-Suite">GitHub</a></li>
-                <li><a href="patchnotes.php">Patch Notes</a></li>
-                <li><a href="documentation.php">FAQ</a></li>
+                <li><a href="/patchnotes.php">Patch Notes</a></li>
+                <li><a href="/documentation.php">FAQ</a></li>
             </ul>
         </div>
         <div class="footer-section">
