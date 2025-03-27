@@ -30,8 +30,8 @@
                             <div class="version-header" data-target="version-<?php echo md5($version); ?>">
                                 <div class="version-header-top">
                                     <div class="version-title">
-                                        <i class="fas fa-cube"></i>
-                                        Version <span class="version-badge"><?php echo htmlspecialchars($version); ?></span>
+                                        <i class="fas fa-cube"></i><?php echo htmlspecialchars($version); ?>
+
                                     </div>
                                     <div class="collapse-icon">
                                         <i class="fas fa-chevron-down"></i>

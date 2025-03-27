@@ -15,7 +15,8 @@
     /* Status colors adapted for the design */
     --completed-color: #4d8dff;
     --in-progress-color: #ffa64d;
-    --planned-color: #ffffff;
+    --planned-color-dark: #06081a;
+    --planned-color-light: #f5f7ff;
     
     /* Additional needed variables */
     --border-light: #e2e8f0;
@@ -188,12 +189,17 @@ header p {
     background-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Update the progress container */
 .progress-container {
     height: 8px;
-    background-color: var(--planned-color);
+    background-color: var(--planned-color-dark);
     border-radius: 10px;
     overflow: hidden;
     position: relative;
+}
+
+.light-mode .progress-container {
+    background-color: var(--planned-color-light);
 }
 
 .progress-bar {
@@ -206,14 +212,59 @@ header p {
 
 .progress-completed {
     background-color: var(--completed-color);
+    position: relative;
+    overflow: hidden;
+    animation: pulse-glow 2s infinite;
+}
+
+.progress-completed::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    );
+    animation: shine-effect 3s infinite;
+}
+
+@keyframes shine-effect {
+    0% {
+        left: -100%;
+    }
+    20% {
+        left: 100%;
+    }
+    100% {
+        left: 100%;
+    }
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 5px 1px var(--completed-color);
+    }
+    50% {
+        box-shadow: 0 0 12px 3px var(--completed-color);
+    }
 }
 
 .progress-in-progress {
     background-color: var(--in-progress-color);
 }
 
+/* Update progress planned */
 .progress-planned {
-    background-color: var(--planned-color);
+    background-color: var(--planned-color-dark);
+}
+
+.light-mode .progress-planned {
+    background-color: var(--planned-color-light);
 }
 
 .progress-stats {
@@ -235,16 +286,21 @@ header p {
     border-radius: 50%;
 }
 
+/* Update dot planned */
+.dot-planned {
+    background-color: var(--planned-color-dark);
+}
+
+.light-mode .dot-planned {
+    background-color: var(--planned-color-light);
+}
+
 .dot-completed {
     background-color: var(--completed-color);
 }
 
 .dot-in-progress {
     background-color: var(--in-progress-color);
-}
-
-.dot-planned {
-    background-color: var(--planned-color)
 }
 
 .version-content {
@@ -370,8 +426,13 @@ header p {
     background-color: var(--in-progress-color);
 }
 
+/* Update feature card for planned status */
 .feature-card.planned::before {
-    background-color: var(--planned-color);
+    background-color: var(--planned-color-dark);
+}
+
+.light-mode .feature-card.planned::before {
+    background-color: var(--planned-color-light);
 }
 
 .feature-card:hover {
@@ -418,6 +479,23 @@ header p {
     font-weight: 500;
     white-space: nowrap;
     margin-left: 10px;
+    user-select: none;
+    transition: transform 0.2s ease;
+}
+
+.feature-status:hover {
+    transform: scale(1.05);
+}
+
+/* Update feature status for planned */
+.feature-status.planned {
+    background-color: var(--planned-color-dark);
+    color: var(--text-light);
+}
+
+.light-mode .feature-status.planned {
+    background-color: var(--planned-color-light);
+    color: var(--text-dark);
 }
 
 .feature-status.completed {
@@ -428,16 +506,15 @@ header p {
     background-color: var(--in-progress-color);
 }
 
-.feature-status.planned {
-    background-color: var(--planned-color);
-    color: var(--text-dark)
-}
-
 .feature-description {
     color: rgba(255, 255, 255, 0.7);
     margin-bottom: 20px;
     line-height: 1.6;
     flex: 1;
+    max-height: 150px;
+    overflow-y: auto;
+    padding-right: 10px;
+    scroll-behavior: smooth;
 }
 
 .light-mode .feature-description {
@@ -461,6 +538,12 @@ header p {
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    user-select: none;
+    transition: transform 0.2s ease;
+}
+
+.feature-type:hover {
+    transform: scale(1.05);
 }
 
 .light-mode .feature-type {
@@ -496,6 +579,12 @@ header p {
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    user-select: none;
+    transition: transform 0.2s ease;
+}
+
+.tag:hover {
+    transform: scale(1.05);
 }
 
 .light-mode .tag {
@@ -603,3 +692,4 @@ header p {
         top: 15px;
     }
 }
+
