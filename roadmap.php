@@ -22,7 +22,7 @@
                     <p>Check back later for updates on our project development roadmap.</p>
                 </div>
             <?php else: ?>
-                <?php $versions = array_reverse($versions); ?>
+                <?php $versions = sortVersionsByLatestFeature($versions, $featuresGrouped); ?>
                 <?php foreach ($versions as $version): ?>
                     <?php if (isset($featuresGrouped[$version])): ?>
                         <?php $stats = $versionStats[$version]; ?>

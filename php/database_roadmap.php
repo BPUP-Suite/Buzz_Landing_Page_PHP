@@ -151,4 +151,32 @@ foreach ($versions as $version) {
         ];
     }
 }
+
+function sortVersionsByLatestFeature($versions, $featuresGrouped) {
+    $versionDates = [];
+
+    foreach ($versions as $version) {
+        if (isset($featuresGrouped[$version])) {
+            // Find the latest feature date for each version
+            $latestDate = '0000-00-00';
+            foreach ($featuresGrouped[$version] as $category) {
+                foreach ($category as $feature) {
+                    if (strtotime($feature['data_fine']) > strtotime($latestDate)) {
+                        $latestDate = $feature['data_fine'];
+                    }
+                }
+            }
+            $versionDates[$version] = $latestDate;
+        }
+    }
+
+    // Sort versions based on the latest feature date
+    usort($versions, function($a, $b) use ($versionDates) {
+        $dateA = $versionDates[$a] ?? '0000-00-00';
+        $dateB = $versionDates[$b] ?? '0000-00-00';
+        return strtotime($dateB) - strtotime($dateA);
+    });
+
+    return $versions;
+}
 ?>
