@@ -15,7 +15,7 @@
     /* Status colors adapted for the design */
     --completed-color: #4d8dff;
     --in-progress-color: #ffa64d;
-    --planned-color: #6d7a9c;
+    --planned-color: #ffffff;
     
     /* Additional needed variables */
     --border-light: #e2e8f0;
@@ -190,7 +190,7 @@ header p {
 
 .progress-container {
     height: 8px;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--planned-color);
     border-radius: 10px;
     overflow: hidden;
     position: relative;
@@ -213,7 +213,7 @@ header p {
 }
 
 .progress-planned {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: var(--planned-color);
 }
 
 .progress-stats {
@@ -244,7 +244,7 @@ header p {
 }
 
 .dot-planned {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: var(--planned-color)
 }
 
 .version-content {
@@ -430,6 +430,7 @@ header p {
 
 .feature-status.planned {
     background-color: var(--planned-color);
+    color: var(--text-dark)
 }
 
 .feature-description {
