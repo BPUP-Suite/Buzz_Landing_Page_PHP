@@ -89,7 +89,15 @@
                                             $categoryIcon = 'fa-tachometer-alt';
                                         } elseif (stripos($category, 'security') !== false) {
                                             $categoryIcon = 'fa-shield-alt';
-                                        }
+                                        } elseif (stripos($category, 'improvement') !== false) {
+                                            $categoryIcon = 'fa-wrench';
+                                        } elseif (stripos($category, 'web') !== false) {
+                                            $categoryIcon = 'fa-globe';
+                                        } elseif (stripos($category, 'webrtc') !== false) {
+                                            $categoryIcon = 'fa-video';
+                                        } elseif (stripos($category, 'chat') !== false) {
+                                            $categoryIcon = 'fa-comment-dots';
+                                        } 
                                     ?>
                                     <div class="category-container">
                                         <div class="category-header" data-target="category-<?php echo md5($version . $category); ?>">
