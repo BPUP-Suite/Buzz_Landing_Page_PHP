@@ -301,10 +301,22 @@ body.light-mode .timeline-dates {
     border-radius: 50px;
     margin-right: 5px;
     margin-bottom: 5px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    transition: var(--transition);
+    cursor: default;
 }
 
 body.light-mode .tag {
     background-color: rgba(0, 85, 255, 0.1);
+}
+
+.tag:hover {
+    transform: translateY(-2px);
+    background-color: rgba(0, 85, 255, 0.3);
+    box-shadow: 0 2px 4px rgba(0, 85, 255, 0.2);
 }
 
 .timeline-description {
@@ -395,6 +407,10 @@ body.light-mode .patch-title {
     align-items: center;
     gap: 5px;
     color: var(--primary);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
 }
 
 body.light-mode .tag-toggle {
@@ -439,6 +455,11 @@ body.light-mode .tag-container {
     border-radius: 50px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     transition: var(--transition);
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    cursor: default;
 }
 
 body.dark-mode .patch-tag {
