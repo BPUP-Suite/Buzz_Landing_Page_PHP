@@ -20,7 +20,7 @@
             <div class="buttons-container">
                 <a href="#download" class="btn">Scaricala subito</a>
                 <div class="button-body">
-                    <a href="https://web.messanger.bpup.israiken.it">
+                    <a href="https://web.buzz.israiken.it">
                         <button class="available-for-btn">
                             <div class="circle">
                             <div class="dot"></div>
