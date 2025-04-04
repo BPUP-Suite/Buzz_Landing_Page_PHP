@@ -22,7 +22,7 @@
                     <p>Check back later for updates on our project development roadmap.</p>
                 </div>
             <?php else: ?>
-                <?php $versions = array_reverse($versions); ?>
+                <?php $versions = sortVersionsByLatestFeature($versions, $featuresGrouped); ?>
                 <?php foreach ($versions as $version): ?>
                     <?php if (isset($featuresGrouped[$version])): ?>
                         <?php $stats = $versionStats[$version]; ?>
@@ -30,8 +30,8 @@
                             <div class="version-header" data-target="version-<?php echo md5($version); ?>">
                                 <div class="version-header-top">
                                     <div class="version-title">
-                                        <i class="fas fa-cube"></i>
-                                        Version <span class="version-badge"><?php echo htmlspecialchars($version); ?></span>
+                                        <i class="fas fa-cube"></i><?php echo htmlspecialchars($version); ?>
+
                                     </div>
                                     <div class="collapse-icon">
                                         <i class="fas fa-chevron-down"></i>
@@ -89,7 +89,15 @@
                                             $categoryIcon = 'fa-tachometer-alt';
                                         } elseif (stripos($category, 'security') !== false) {
                                             $categoryIcon = 'fa-shield-alt';
-                                        }
+                                        } elseif (stripos($category, 'improvement') !== false) {
+                                            $categoryIcon = 'fa-wrench';
+                                        } elseif (stripos($category, 'web') !== false) {
+                                            $categoryIcon = 'fa-globe';
+                                        } elseif (stripos($category, 'webrtc') !== false) {
+                                            $categoryIcon = 'fa-video';
+                                        } elseif (stripos($category, 'chat') !== false) {
+                                            $categoryIcon = 'fa-comment-dots';
+                                        } 
                                     ?>
                                     <div class="category-container">
                                         <div class="category-header" data-target="category-<?php echo md5($version . $category); ?>">
