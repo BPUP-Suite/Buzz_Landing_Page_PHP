@@ -750,6 +750,7 @@ body.light-mode .collapsible-content {
 .collapsible-content.active {
     max-height: 500px;
     padding: 15px;
+    overflow-y: auto;
 }
 
 /* Container per le sezioni collassabili che le mantiene tutte allineate */
